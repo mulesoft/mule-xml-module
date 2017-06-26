@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd
+          http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="tryCatch">
+        <xml-module:xquery-transform>
+            <xml-module:xquery>
+                <![CDATA[
+                   xquery version "3.0";
+                    declare variable $document external;
+                    let $x := "Hello"
+                    return
+                    try {
+                        $x cast as xs:integer
+                    } catch * {
+                        <error>Caught error {$err:code}: {$err:description}</error>
+                    }
+                ]]>
+            </xml-module:xquery>
+        </xml-module:xquery-transform>
+    </flow>
+
+    <flow name="switch">
+        <xml-module:xquery-transform>
+            <xml-module:xquery>
+                <![CDATA[
+                   xquery version "3.0";
+                    declare variable $document external;
+                    let $animal := "Duck"
+                    return
+                        switch ($animal)
+                            case "Cow" return <Moo />
+                            case "Cat" return <Meow/>
+                            case "Duck" return <Quack />
+                            case "Dog" case "Pitbull" return <Wuff/>
+                            default return "What's that odd noise?"
+                ]]>
+            </xml-module:xquery>
+        </xml-module:xquery-transform>
+    </flow>
+
+    <flow name="groupBy">
+        <xml-module:xquery-transform>
+            <xml-module:xquery>
+                <![CDATA[
+                   xquery version "3.0";
+                    declare variable $document external;
+                    for $n in 1 to 10
+                        group by $mod := $n mod 2
+                        return
+                            if ($mod = 0) then
+                                <even>{$n}</even>
+                            else
+                                <odd>{$n}</odd>
+                ]]>
+            </xml-module:xquery>
+        </xml-module:xquery-transform>
+    </flow>
+
+    <flow name="books">
+        <xml-module:xquery-transform>
+            <xml-module:xquery><![CDATA[
+                xquery version "3.0";
+                declare copy-namespaces no-preserve, inherit;
+                declare variable $document external;
+
+                for $b in $document//BOOKS/ITEM
+                order by string-length($b/TITLE) return
+                <book>
+                    <author> { $b/AUTHOR } </author>
+                    <title> { $b/TITLE } </title>
+                </book>
+            ]]></xml-module:xquery>
+        </xml-module:xquery-transform>
+    </flow>
+
+    <flow name="multipleInputsByPath">
+        <xml-module:xquery-transform>
+            <xml-module:xquery>
+                <![CDATA[
+                   xquery version "3.0";
+                    declare variable $document external;
+                    declare variable $cities external;
+                    declare variable $books external;
+                    <mixes>
+                    {
+                        for $b in fn:doc($books)/BOOKLIST/BOOKS/ITEM,
+                            $c in fn:doc($cities)/cities/city
+
+                        return <mix title="{$b/TITLE/text()}" city="{$c/@name}" />
+                    }
+                    </mixes>
+                ]]>
+            </xml-module:xquery>
+            <xml-module:context-properties>#[{'books' : vars.books, 'cities': vars.cities}]</xml-module:context-properties>
+        </xml-module:xquery-transform>
+    </flow>
+</mule>

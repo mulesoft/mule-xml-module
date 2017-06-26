@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd
+          http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+
+    <xml-module:config name="unsafe" acceptExternalEntities="true" expandInternalEntities="true" />
+
+    <xml-module:config name="safe" acceptExternalEntities="false" expandInternalEntities="false" />
+
+    <flow name="safeXxe">
+        <xml-module:xslt-transform>
+            <xml-module:xslt><![CDATA[
+                <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                    <xsl:template match="/">
+                        <users>
+                            <xsl:copy-of select="." />
+                        </users>
+                    </xsl:template>
+                </xsl:stylesheet>
+            ]]></xml-module:xslt>
+        </xml-module:xslt-transform>
+    </flow>
+
+    <flow name="unsafeXxe">
+        <xml-module:xslt-transform acceptExternalEntities="true" expandInternalEntities="true">
+            <xml-module:xslt><![CDATA[
+                <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                    <xsl:template match="/">
+                        <users>
+                            <xsl:copy-of select="." />
+                        </users>
+                    </xsl:template>
+                </xsl:stylesheet>
+            ]]></xml-module:xslt>
+        </xml-module:xslt-transform>
+    </flow>
+
+    <flow name="overriddenSafe">
+        <xml-module:xslt-transform acceptExternalEntities="false" expandInternalEntities="false" config-ref="unsafe">
+            <xml-module:xslt><![CDATA[
+                <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                    <xsl:template match="/">
+                        <users>
+                            <xsl:copy-of select="." />
+                        </users>
+                    </xsl:template>
+                </xsl:stylesheet>
+            ]]></xml-module:xslt>
+        </xml-module:xslt-transform>
+    </flow>
+
+    <flow name="overriddenUnsafe">
+        <xml-module:xslt-transform acceptExternalEntities="true" expandInternalEntities="true" config-ref="unsafe">
+            <xml-module:xslt><![CDATA[
+                <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                    <xsl:template match="/">
+                        <users>
+                            <xsl:copy-of select="." />
+                        </users>
+                    </xsl:template>
+                </xsl:stylesheet>
+            ]]></xml-module:xslt>
+        </xml-module:xslt-transform>
+    </flow>
+
+
+</mule>
+
