@@ -10,6 +10,8 @@ import javax.xml.XMLConstants;
 
 /**
  * Lists the schema languages supported
+ *
+ * @since 1.0
  */
 public enum SchemaLanguage {
 

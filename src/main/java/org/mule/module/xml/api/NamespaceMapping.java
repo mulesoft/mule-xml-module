@@ -15,6 +15,8 @@ import org.mule.runtime.extension.api.annotation.param.display.Path;
 
 /**
  * Maps a prefix to a namespace URI
+ *
+ * @since 1.0
  */
 @Alias("namespace")
 public class NamespaceMapping {

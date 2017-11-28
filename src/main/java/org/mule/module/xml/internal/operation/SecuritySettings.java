@@ -13,6 +13,11 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
+/**
+ * Parameter group for security related parameters
+ *
+ * @since 1.0
+ */
 public class SecuritySettings {
 
   /**
