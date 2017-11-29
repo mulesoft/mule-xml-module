@@ -7,7 +7,9 @@
 package org.mule.module.xml.internal.operation;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.mule.module.xml.api.EntityExpansion.NEVER;
 import static org.mule.runtime.core.api.util.ExceptionUtils.extractOfType;
+import org.mule.module.xml.api.EntityExpansion;
 import org.mule.module.xml.internal.error.TransformationException;
 import org.mule.module.xml.internal.util.LocalEntityResolver;
 import org.mule.runtime.api.exception.MuleException;
@@ -17,7 +19,10 @@ import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.core.api.util.func.CheckedFunction;
 import org.mule.runtime.core.api.util.xmlsecurity.XMLSecureFactories;
-import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.ConfigOverride;
+import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 import com.google.common.cache.CacheBuilder;
@@ -49,13 +54,24 @@ public abstract class PooledTransformerOperation<K, T> implements Initialisable,
 
   protected DocumentBuilderFactory documentBuilderFactory;
   protected EntityResolver entityResolver = new LocalEntityResolver();
+  private LoadingCache<K, GenericObjectPool<T>> transformerPools;
+
+  /**
+   * Defines how to treat entity expansion. Setting a value different than NEVER renders the application
+   * vulnerable to XXE and/or DoS attacks
+   */
+  @Parameter
+  @ConfigOverride
+  @Placement(tab = "Security")
+  @Summary("Set to NEVER to prevent XXE and DoS attacks")
+  protected EntityExpansion expandEntities = NEVER;
 
   @Override
   public final void initialise() throws InitialisationException {
     try {
       documentBuilderFactory =
           XMLSecureFactories
-              .createWithConfig(securitySettings.isAcceptExternalEntities(), securitySettings.isExpandInternalEntities())
+              .createWithConfig(expandEntities.isAcceptExternalEntities(), expandEntities.isExpandInternalEntities())
               .getDocumentBuilderFactory();
       documentBuilderFactory.setNamespaceAware(true);
 
@@ -68,10 +84,7 @@ public abstract class PooledTransformerOperation<K, T> implements Initialisable,
 
   protected void doInitialise() throws InitialisationException {}
 
-  private LoadingCache<K, GenericObjectPool<T>> transformerPools;
 
-  @ParameterGroup(name = "Security")
-  protected SecuritySettings securitySettings;
 
   @Override
   public final void start() throws MuleException {

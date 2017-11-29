@@ -6,7 +6,9 @@
  */
 package org.mule.module.xml.internal;
 
+import static org.mule.module.xml.api.EntityExpansion.NEVER;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+import org.mule.module.xml.api.EntityExpansion;
 import org.mule.module.xml.api.NamespaceMapping;
 import org.mule.module.xml.api.XmlError;
 import org.mule.module.xml.internal.operation.SchemaValidatorOperation;
@@ -23,7 +25,6 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ import java.util.List;
 @Extension(name = "XML")
 @Operations({XsltOperation.class, XPathOperation.class, XQueryOperation.class, SchemaValidatorOperation.class})
 @ErrorTypes(XmlError.class)
-@ExpressionFunctions({XPathFunction.class})
+@ExpressionFunctions(XPathFunction.class)
 @Xml(prefix = "xml-module")
 public class XmlModule {
 
@@ -55,30 +56,13 @@ public class XmlModule {
   private List<NamespaceMapping> namespaces = new ArrayList<>();
 
   /**
-   * Whether to accept XML documents with references to external files.
-   * Note that even if allowed, these won't be expanded when expandInternalEntities is false.
-   * Default value is false. Setting this value to true will make your application
-   * vulnerable to XXE attacks. Use with extreme care.
+   * Defines how to treat entity expansion. Setting a value different than NEVER renders the application
+   * vulnerable to XXE and/or DoS attacks
    */
   @Parameter
-  @Optional(defaultValue = "false")
-  @Expression(NOT_SUPPORTED)
-  @Placement(order = 1, tab = "Security")
-  @Summary("Set to false to prevent XXE attacks")
-  private boolean acceptExternalEntities = false;
-
-
-  /**
-   * Whether to expand internal entity references in the XML body.
-   * Default value is false. Setting this value to true will make your application
-   * vulnerable to Billion Laughs (DoS) attacks. Use with extreme care.
-   */
-  @Parameter
-  @Optional(defaultValue = "false")
-  @Expression(NOT_SUPPORTED)
-  @Placement(order = 2, tab = "Security")
-  @Summary("Set to false to prevent DoS attacks")
-  private boolean expandInternalEntities = false;
+  @Optional(defaultValue = "NEVER")
+  @Summary("Set to NEVER to prevent XXE and DoS attacks")
+  private EntityExpansion expandEntities = NEVER;
 
   public List<NamespaceMapping> getNamespaces() {
     return namespaces;

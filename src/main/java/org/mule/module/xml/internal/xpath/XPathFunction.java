@@ -7,8 +7,8 @@
 package org.mule.module.xml.internal.xpath;
 
 import static java.util.Collections.emptyList;
+import static org.mule.module.xml.api.EntityExpansion.NEVER;
 import org.mule.module.xml.internal.XmlModule;
-import org.mule.module.xml.internal.operation.SecuritySettings;
 import org.mule.module.xml.internal.operation.XPathOperation;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
@@ -32,7 +32,7 @@ public class XPathFunction implements Initialisable, Startable, Stoppable {
 
   @Override
   public void initialise() throws InitialisationException {
-    xpathOperation = new XPathOperation(new SecuritySettings(false, false));
+    xpathOperation = new XPathOperation(NEVER);
     xpathOperation.initialise();
   }
 
@@ -55,6 +55,6 @@ public class XPathFunction implements Initialisable, Startable, Stoppable {
    * @return a List of Strings with all the matching elements
    */
   public List<String> xpath(String xpath, InputStream content, Map<String, Object> contextProperties) {
-    return xpathOperation.xpathExtract(content, xpath, contextProperties, emptyList(), config);
+    return xpathOperation.xpathExtract(content, xpath, contextProperties, emptyList(), null, config);
   }
 }

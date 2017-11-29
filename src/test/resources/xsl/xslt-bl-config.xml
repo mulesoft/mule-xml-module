@@ -6,7 +6,7 @@
           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="flowBLEnabled">
-        <xml-module:xslt-transform expandInternalEntities="true" acceptExternalEntities="true">
+        <xml-module:xslt-transform expandEntities="ALL">
             <xml-module:xslt><![CDATA[
                 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                     <xsl:template match="/">

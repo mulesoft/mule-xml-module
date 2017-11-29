@@ -6,9 +6,9 @@
           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
 
-    <xml-module:config name="unsafe" acceptExternalEntities="true" expandInternalEntities="true" />
+    <xml-module:config name="unsafe" expandEntities="ALL" />
 
-    <xml-module:config name="safe" acceptExternalEntities="false" expandInternalEntities="false" />
+    <xml-module:config name="safe" expandEntities="NEVER" />
 
     <flow name="safeXxe">
         <xml-module:xslt-transform>
@@ -25,7 +25,7 @@
     </flow>
 
     <flow name="unsafeXxe">
-        <xml-module:xslt-transform acceptExternalEntities="true" expandInternalEntities="true">
+        <xml-module:xslt-transform expandEntities="ALL">
             <xml-module:xslt><![CDATA[
                 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                     <xsl:template match="/">
@@ -39,7 +39,7 @@
     </flow>
 
     <flow name="overriddenSafe">
-        <xml-module:xslt-transform acceptExternalEntities="false" expandInternalEntities="false" config-ref="unsafe">
+        <xml-module:xslt-transform expandEntities="NEVER" config-ref="unsafe">
             <xml-module:xslt><![CDATA[
                 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                     <xsl:template match="/">
@@ -53,7 +53,7 @@
     </flow>
 
     <flow name="overriddenUnsafe">
-        <xml-module:xslt-transform acceptExternalEntities="true" expandInternalEntities="true" config-ref="unsafe">
+        <xml-module:xslt-transform expandEntities="ALL" config-ref="unsafe">
             <xml-module:xslt><![CDATA[
                 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                     <xsl:template match="/">
