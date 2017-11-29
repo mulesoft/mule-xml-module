@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd
+          http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="shakespeareLines">
+        <xml-module:xpath-extract xpath="//LINE[contains(., $word)]">
+            <xml-module:context-properties>#[{'word': vars.word}]</xml-module:context-properties>
+        </xml-module:xpath-extract>
+    </flow>
+
+    <flow name="shakespeareLinesFunction">
+        <set-payload value="#[XmlModule::xpath('//LINE[contains(., \$word)]', payload, {'word': vars.word})]" />
+    </flow>
+
+    <flow name="foreach">
+        <xml-module:xpath-extract xpath="//LINE" />
+        <set-variable variableName="accumulator" value="#[[]]" />
+        <foreach>
+            <set-variable variableName="accumulator" value="#[vars.accumulator + payload]" />
+        </foreach>
+        <set-payload value="#[vars.accumulator]" />
+    </flow>
+
+    <flow name="foreachWithFunction">
+        <set-variable variableName="accumulator" value="#[[]]" />
+        <foreach collection="#[XmlModule::xpath('//LINE', payload, {})]">
+            <set-variable variableName="accumulator" value="#[vars.accumulator + payload]" />
+        </foreach>
+        <set-payload value="#[vars.accumulator]" />
+    </flow>
+
+</mule>
