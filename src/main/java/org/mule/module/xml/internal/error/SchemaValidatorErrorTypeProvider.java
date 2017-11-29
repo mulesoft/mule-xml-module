@@ -17,6 +17,11 @@ import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Provides the error types for the validate-schema operation
+ *
+ * @since 1.0
+ */
 public class SchemaValidatorErrorTypeProvider implements ErrorTypeProvider {
 
   @Override
