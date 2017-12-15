@@ -200,7 +200,10 @@ public class SchemaValidatorOperation
     @Override
     public boolean equals(Object obj) {
       SchemaKey other = (SchemaKey) obj;
-      return Objects.equals(schemas, other.schemas) && Objects.equals(schemas, other.schemas);
+      if (other == null) {
+        return false;
+      }
+      return Objects.equals(schemas, other.schemas) && Objects.equals(schemaLanguage, other.schemaLanguage);
     }
 
     @Override
