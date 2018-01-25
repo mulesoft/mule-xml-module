@@ -13,10 +13,12 @@ import static org.junit.Assert.assertThat;
 import static org.mule.functional.api.exception.ExpectedError.none;
 import static org.mule.module.xml.api.XmlError.SCHEMA_NOT_HONOURED;
 import static org.mule.runtime.core.api.util.IOUtils.getResourceAsStream;
+import static org.mule.runtime.core.api.util.xmlsecurity.XMLSecureFactories.EXTERNAL_ENTITIES_PROPERTY;
 import org.mule.functional.api.exception.ExpectedError;
 import org.mule.module.xml.XmlTestCase;
 import org.mule.module.xml.api.SchemaViolation;
 import org.mule.runtime.core.api.event.CoreEvent;
+import org.mule.tck.junit4.rule.SystemProperty;
 
 import java.io.InputStream;
 import java.util.List;
@@ -28,6 +30,11 @@ import org.junit.Rule;
 import org.junit.Test;
 
 public class SchemaValidationTestCase extends XmlTestCase {
+
+
+  // this is disabled (secure) by default, so we need to change it for the test
+  @Rule
+  public SystemProperty externalEntities = new SystemProperty(EXTERNAL_ENTITIES_PROPERTY, "true");
 
   private static final String SIMPLE_SCHEMA = "validation/schema1.xsd";
   private static final String INCLUDE_SCHEMA = "validation/schema-with-include.xsd";
