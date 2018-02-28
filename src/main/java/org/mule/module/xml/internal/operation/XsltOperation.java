@@ -66,7 +66,7 @@ public class XsltOperation extends PooledTransformerOperation<String, XsltTransf
    * @return the transformed document
    */
   @Execution(CPU_INTENSIVE)
-  @MediaType(ANY)
+  @MediaType(value = ANY, strict = false)
   @Throws(StandardXmlErrorTypeProvider.class)
   public String xsltTransform(@Content(primary = true) InputStream content,
                               @Text String xslt,

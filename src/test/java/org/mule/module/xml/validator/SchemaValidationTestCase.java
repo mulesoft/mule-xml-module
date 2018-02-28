@@ -17,6 +17,7 @@ import static org.mule.runtime.core.api.util.xmlsecurity.XMLSecureFactories.EXTE
 import org.mule.functional.api.exception.ExpectedError;
 import org.mule.module.xml.XmlTestCase;
 import org.mule.module.xml.api.SchemaViolation;
+import org.mule.runtime.api.event.Event;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.tck.junit4.rule.SystemProperty;
 
@@ -62,6 +63,13 @@ public class SchemaValidationTestCase extends XmlTestCase {
   }
 
   @Test
+  public void extractErrorsUsingExpressions() throws Exception {
+    Event event = validate("extractErrorsFromException", getInvalidPayload(), SIMPLE_SCHEMA);
+    List<SchemaViolation> violations = (List<SchemaViolation>) event.getMessage().getPayload().getValue();
+    assertViolations(violations);
+  }
+
+  @Test
   public void validWithIncludes() throws Exception {
     validate(getValidPayload(), INCLUDE_SCHEMA);
   }
@@ -80,9 +88,7 @@ public class SchemaValidationTestCase extends XmlTestCase {
       public boolean matches(Object item) {
         CoreEvent event = (CoreEvent) item;
         List<SchemaViolation> problems = (List<SchemaViolation>) event.getError().get().getErrorMessage().getPayload().getValue();
-        assertThat(problems, hasSize(1));
-        assertThat(problems.get(0).getDescription(),
-                   equalTo("cvc-complex-type.2.4.a: Invalid content was found starting with element 'fail'. One of '{used}' is expected."));
+        assertViolations(problems);
 
         return true;
       }
@@ -94,8 +100,18 @@ public class SchemaValidationTestCase extends XmlTestCase {
     });
   }
 
-  private void validate(InputStream payload, String... schemas) throws Exception {
-    flowRunner("validateSchema")
+  private void assertViolations(List<SchemaViolation> problems) {
+    assertThat(problems, hasSize(1));
+    assertThat(problems.get(0).getDescription(),
+               equalTo("cvc-complex-type.2.4.a: Invalid content was found starting with element 'fail'. One of '{used}' is expected."));
+  }
+
+  private Event validate(InputStream payload, String... schemas) throws Exception {
+    return validate("validateSchema", payload, schemas);
+  }
+
+  private Event validate(String flowName, InputStream payload, String... schemas) throws Exception {
+    return flowRunner(flowName)
         .withPayload(payload)
         .withVariable("schemas", parseSchemas(schemas))
         .run();
