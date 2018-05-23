@@ -9,9 +9,19 @@ node('docker') {
         sh 'mvn --version'
     }
 
+    String mvn_command = "clean install"
+
+    stage('Set Maven Properties') {
+
+        if (env.BRANCH_NAME.contains('.x') || env.BRANCH_NAME.equals('master')) {
+           mvn_command = "clean deploy"
+        }
+
+    }
+
     stage('Build') {
         configFileProvider([configFile(fileId: 'org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig1422369625996', variable: 'org.mule.maven.client.api.SettingsSupplierFactory.userSettings')]) {
-            mvn("${mvn_test_args}")
+            mvn("${mvn_command}")
         }
     }
 }
