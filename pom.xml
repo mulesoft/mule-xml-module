@@ -20,7 +20,7 @@
         A Mule Module which provides functionality to handle XML. This module should be used for advanced use cases or use cases
         associated with XML standards such as XSLT, XPath and XQuery.
         Take in mind that DataWeave is not only perfectly capable to handle most of those use cases and can replace those standards the majority
-        of the times, but it's also our recommended approach.
+        of the times, but it's also our recommended approach. pepe
     </description>
 
     <properties>
