@@ -34,6 +34,7 @@ import java.util.Map;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 
+import net.sf.saxon.Controller;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
@@ -161,6 +162,10 @@ public class XsltOperation extends PooledTransformerOperation<String, XsltTransf
 
         transformer.clearParameters();
         transformer.setSource(null);
+        Controller controller = transformer.getUnderlyingController();
+        if (controller != null) {
+          controller.reset();
+        }
         ((Serializer) transformer.getDestination()).setOutputWriter(null);
       }
     };
