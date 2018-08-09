@@ -62,11 +62,11 @@ public class SchemaValidationTestCase extends XmlTestCase {
   }
 
   @Test
-  public void schemaWithIncludedTypes() throws Exception {
+  public void invalidWithInclude() throws Exception {
     expectedError.expectErrorType(ERROR_NAMESPACE, SCHEMA_NOT_HONOURED.name());
     validate("validateSchemaWithReferences",
-             getResourceAsStream("validation/referencing/xml-with-referencing-schema.xml"),
-             "validation/referencing/schema-with-references.xsd");
+             getResourceAsStream("validation/include/xml-with-referencing-schema.xml"),
+             "validation/include/schema-with-references.xsd");
   }
 
   @Test
@@ -77,12 +77,12 @@ public class SchemaValidationTestCase extends XmlTestCase {
   }
 
   @Test
-  public void validWithIncludes() throws Exception {
+  public void validWithImport() throws Exception {
     validate(getValidPayload(), INCLUDE_SCHEMA);
   }
 
   @Test
-  public void invalidWithIncludes() throws Exception {
+  public void invalidWithImport() throws Exception {
     expectValidationFailure();
     validate(getInvalidPayload(), INCLUDE_SCHEMA);
   }
