@@ -5,9 +5,12 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd
           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-
     <flow name="validateSchema">
         <xml-module:validate-schema schemas="#[vars.schemas]" />
+    </flow>
+
+    <flow name="validateSchemaWithReferences">
+        <xml-module:validate-schema schemas="#[vars.schemas]" expandEntities="ALL"/>
     </flow>
 
     <flow name="extractErrorsFromException">
