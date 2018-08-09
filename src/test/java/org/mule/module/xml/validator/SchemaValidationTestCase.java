@@ -12,7 +12,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mule.functional.api.exception.ExpectedError.none;
 import static org.mule.module.xml.api.XmlError.SCHEMA_NOT_HONOURED;
-import static org.mule.runtime.core.api.util.IOUtils.getResourceAsStream;
 import static org.mule.runtime.core.api.util.xmlsecurity.XMLSecureFactories.EXTERNAL_ENTITIES_PROPERTY;
 import org.mule.functional.api.exception.ExpectedError;
 import org.mule.module.xml.XmlTestCase;
@@ -63,6 +62,14 @@ public class SchemaValidationTestCase extends XmlTestCase {
   }
 
   @Test
+  public void invalidWithInclude() throws Exception {
+    expectedError.expectErrorType(ERROR_NAMESPACE, SCHEMA_NOT_HONOURED.name());
+    validate("validateSchemaWithReferences",
+             getResourceAsStream("validation/include/xml-with-referencing-schema.xml"),
+             "validation/include/schema-with-references.xsd");
+  }
+
+  @Test
   public void extractErrorsUsingExpressions() throws Exception {
     Event event = validate("extractErrorsFromException", getInvalidPayload(), SIMPLE_SCHEMA);
     List<SchemaViolation> violations = (List<SchemaViolation>) event.getMessage().getPayload().getValue();
@@ -70,12 +77,12 @@ public class SchemaValidationTestCase extends XmlTestCase {
   }
 
   @Test
-  public void validWithIncludes() throws Exception {
+  public void validWithImport() throws Exception {
     validate(getValidPayload(), INCLUDE_SCHEMA);
   }
 
   @Test
-  public void invalidWithIncludes() throws Exception {
+  public void invalidWithImport() throws Exception {
     expectValidationFailure();
     validate(getInvalidPayload(), INCLUDE_SCHEMA);
   }
@@ -103,7 +110,8 @@ public class SchemaValidationTestCase extends XmlTestCase {
   private void assertViolations(List<SchemaViolation> problems) {
     assertThat(problems, hasSize(1));
     assertThat(problems.get(0).getDescription(),
-               equalTo("cvc-complex-type.2.4.a: Invalid content was found starting with element 'fail'. One of '{used}' is expected."));
+               equalTo(
+                       "cvc-complex-type.2.4.a: Invalid content was found starting with element 'fail'. One of '{used}' is expected."));
   }
 
   private Event validate(InputStream payload, String... schemas) throws Exception {
@@ -125,11 +133,15 @@ public class SchemaValidationTestCase extends XmlTestCase {
     return Stream.of(schemas).map(String::trim).collect(joining(", "));
   }
 
-  private InputStream getValidPayload() throws Exception {
-    return getResourceAsStream(VALID_XML_FILE, getClass());
+  private InputStream getValidPayload() {
+    return getResourceAsStream(VALID_XML_FILE);
   }
 
-  private InputStream getInvalidPayload() throws Exception {
-    return getResourceAsStream(INVALID_XML_FILE, getClass());
+  private InputStream getInvalidPayload() {
+    return getResourceAsStream(INVALID_XML_FILE);
+  }
+
+  private InputStream getResourceAsStream(String path) {
+    return getClass().getClassLoader().getResourceAsStream(path);
   }
 }

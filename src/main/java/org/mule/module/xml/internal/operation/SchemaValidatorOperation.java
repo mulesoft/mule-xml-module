@@ -8,22 +8,24 @@ package org.mule.module.xml.internal.operation;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptySet;
+import static java.util.Objects.hash;
 import static java.util.stream.Collectors.toCollection;
 import static org.mule.module.xml.internal.util.XMLUtils.toDOMNode;
 import static org.mule.runtime.api.meta.model.display.PathModel.Type.FILE;
 import static org.mule.runtime.api.meta.model.operation.ExecutionType.CPU_INTENSIVE;
 import static org.mule.runtime.core.api.util.IOUtils.getResourceAsUrl;
+import static org.mule.runtime.core.api.util.xmlsecurity.XMLSecureFactories.createWithConfig;
+import org.mule.module.xml.api.EntityExpansion;
 import org.mule.module.xml.api.SchemaLanguage;
+import org.mule.module.xml.api.SchemaValidationException;
 import org.mule.module.xml.api.SchemaViolation;
 import org.mule.module.xml.internal.XmlModule;
 import org.mule.module.xml.internal.error.InvalidInputXmlException;
 import org.mule.module.xml.internal.error.InvalidSchemaException;
-import org.mule.module.xml.api.SchemaValidationException;
 import org.mule.module.xml.internal.error.SchemaValidatorErrorTypeProvider;
 import org.mule.module.xml.internal.error.TransformationException;
 import org.mule.module.xml.internal.util.MuleResourceResolver;
 import org.mule.runtime.core.api.util.StringUtils;
-import org.mule.runtime.core.api.util.xmlsecurity.XMLSecureFactories;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.execution.Execution;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -84,7 +86,7 @@ public class SchemaValidatorOperation
                              @Config XmlModule config) {
 
     Node node = toDOMNode(content, documentBuilderFactory);
-    withTransformer(new SchemaKey(schemas, schemaLanguage.getLanguageUri()), validator -> {
+    withTransformer(new SchemaKey(schemas, schemaLanguage.getLanguageUri(), expandEntities), validator -> {
 
       // set again since the reset() method may nullify this
       validator.setResourceResolver(resourceResolver);
@@ -94,15 +96,15 @@ public class SchemaValidatorOperation
       validator.setErrorHandler(new ErrorHandler() {
 
         @Override
-        public void warning(SAXParseException exception) throws SAXException {}
+        public void warning(SAXParseException exception) {}
 
         @Override
-        public void error(SAXParseException exception) throws SAXException {
+        public void error(SAXParseException exception) {
           trackError(exception);
         }
 
         @Override
-        public void fatalError(SAXParseException exception) throws SAXException {
+        public void fatalError(SAXParseException exception) {
           trackError(exception);
         }
 
@@ -132,9 +134,11 @@ public class SchemaValidatorOperation
     return new BasePooledObjectFactory<javax.xml.validation.Validator>() {
 
       @Override
-      public javax.xml.validation.Validator create() throws Exception {
+      public javax.xml.validation.Validator create() {
         Source[] schemas = loadSchemas(key.schemas);
-        SchemaFactory schemaFactory = XMLSecureFactories.createDefault().getSchemaFactory(key.schemaLanguage);
+        SchemaFactory schemaFactory = createWithConfig(key.expandEntities.isAcceptExternalEntities(),
+                                                       key.expandEntities.isExpandInternalEntities())
+                                                           .getSchemaFactory(key.schemaLanguage);
         schemaFactory.setResourceResolver(resourceResolver);
 
         Schema schema;
@@ -148,7 +152,7 @@ public class SchemaValidatorOperation
       }
 
       @Override
-      public void passivateObject(PooledObject<javax.xml.validation.Validator> p) throws Exception {
+      public void passivateObject(PooledObject<javax.xml.validation.Validator> p) {
         p.getObject().setErrorHandler(null);
         p.getObject().reset();
       }
@@ -183,10 +187,12 @@ public class SchemaValidatorOperation
 
     private final Set<String> schemas;
     private final String schemaLanguage;
+    private final EntityExpansion expandEntities;
 
-    public SchemaKey(String schemas, String schemaLanguage) {
+    public SchemaKey(String schemas, String schemaLanguage, EntityExpansion expandEntities) {
       this.schemas = parseSchemas(schemas);
       this.schemaLanguage = schemaLanguage;
+      this.expandEntities = expandEntities;
     }
 
     private Set<String> parseSchemas(String schemas) {
@@ -203,12 +209,14 @@ public class SchemaValidatorOperation
       if (other == null) {
         return false;
       }
-      return Objects.equals(schemas, other.schemas) && Objects.equals(schemaLanguage, other.schemaLanguage);
+      return Objects.equals(schemas, other.schemas)
+          && Objects.equals(schemaLanguage, other.schemaLanguage)
+          && expandEntities == other.expandEntities;
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(schemas, schemaLanguage);
+      return hash(schemas, schemaLanguage, expandEntities);
     }
   }
 }
