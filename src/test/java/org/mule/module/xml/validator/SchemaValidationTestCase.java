@@ -62,7 +62,7 @@ public class SchemaValidationTestCase extends XmlTestCase {
   }
 
   @Test
-  public void schemaWithReferences() throws Exception {
+  public void schemaWithIncludedTypes() throws Exception {
     expectedError.expectErrorType(ERROR_NAMESPACE, SCHEMA_NOT_HONOURED.name());
     validate("validateSchemaWithReferences",
              getResourceAsStream("validation/referencing/xml-with-referencing-schema.xml"),
