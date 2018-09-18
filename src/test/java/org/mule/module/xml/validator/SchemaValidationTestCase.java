@@ -84,7 +84,7 @@ public class SchemaValidationTestCase extends XmlTestCase {
   @Test
   public void invalidWithImport() throws Exception {
     expectValidationFailure();
-    validate(getInvalidPayload(), INCLUDE_SCHEMA);
+    validate("validateSchemaWithReferences", getInvalidPayload(), INCLUDE_SCHEMA);
   }
 
   private void expectValidationFailure() {
