@@ -123,7 +123,7 @@ public class SchemaValidatorOperation
 
       if (!errors.isEmpty()) {
         throw new SchemaValidationException("Input XML was not compliant with the schema. Check this error's Mule message for the "
-            + "list of problems (e.g: #[error.message.payload[0].description)", errors);
+            + "list of problems (e.g: #[error.errorMessage.payload[0].description)", errors);
       }
       return null;
     });
