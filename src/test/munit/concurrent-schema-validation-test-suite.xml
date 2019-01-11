@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd">
+
+    <munit:config name="concurrent-schema-validation-test-suite.xml"/>
+
+    <munit:test name="validateXmlFilesConcurrently">
+        <munit:behavior>
+            <set-variable variableName="concurrentValidations" value="#[200]"/>
+        </munit:behavior>
+        <munit:execution>
+            <foreach collection="#[1 to vars.concurrentValidations]">
+                <async>
+                    <xml-module:validate-schema schemas="validation/concurrent-schema.xsd">
+                        <xml-module:content>#[readUrl('classpath://validation/concurrent-validation.xml', 'text/plain')]
+                        </xml-module:content>
+                    </xml-module:validate-schema>
+                    <munit-tools:queue/>
+                </async>
+            </foreach>
+        </munit:execution>
+        <munit:validation>
+            <until-successful maxRetries="500" millisBetweenRetries="100">
+                <munit-tools:assert-that expression="#[MunitTools::queueSize()]"
+                                         is="#[MunitTools::equalTo(vars.concurrentValidations)]"/>
+            </until-successful>
+            <try>
+                <until-successful maxRetries="500" millisBetweenRetries="100">
+                    <munit-tools:assert-that expression="#[MunitTools::queueSize()]"
+                                             is="#[MunitTools::equalTo(vars.concurrentValidations)]"/>
+                </until-successful>
+                <error-handler>
+                    <on-error-propagate type="ANY">
+                        <logger level="ERROR"
+                                message="#['Size should be '++ vars.concurrentValidations ++' but was: ' ++ MunitTools::queueSize()]"/>
+                    </on-error-propagate>
+                </error-handler>
+            </try>
+        </munit:validation>
+    </munit:test>
+
+</mule>
