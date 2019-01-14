@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="tXML">
+
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Header"/>
+                <xs:element ref="Message"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Header">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Source"/>
+                <xs:element ref="Action_Type"/>
+                <xs:element minOccurs="0" ref="Reference_ID"/>
+                <xs:element ref="Message_Type"/>
+                <xs:element minOccurs="0" ref="Company_ID"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Source"/>
+    <xs:element name="Action_Type"/>
+    <xs:element name="Reference_ID"/>
+    <xs:element name="Message_Type"/>
+    <xs:element name="Company_ID"/>
+    <xs:element name="Message">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="ReleaseUpdate"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ReleaseUpdate">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Release_ID"/>
+                <xs:element ref="Status"/>
+                <xs:element ref="Line_Item"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Release_ID"/>
+    <xs:element name="Status"/>
+    <xs:element name="Line_Item">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="Release_Line_ID"/>
+                <xs:element minOccurs="0" ref="SKU_Name"/>
+                <xs:element minOccurs="0" ref="Quantity"/>
+                <xs:element minOccurs="0" ref="Original_Ord_Nbr"/>
+                <xs:element minOccurs="0" ref="Original_Ord_Line"/>
+                <xs:element minOccurs="0" ref="Post_Shipped_Status"/>
+                <xs:element minOccurs="0" ref="Message"/>
+                <xs:element minOccurs="0" ref="Post_Shipped_Status_Date"/>
+                <xs:element minOccurs="0" ref="Misc_Field_01"/>
+                <xs:element minOccurs="0" ref="Misc_Field_02"/>
+                <xs:element minOccurs="0" ref="Misc_Field_03"/>
+                <xs:element minOccurs="0" ref="Misc_Field_04"/>
+                <xs:element minOccurs="0" ref="Misc_Field_05"/>
+                <xs:element minOccurs="0" ref="Misc_Field_06"/>
+                <xs:element minOccurs="0" ref="Misc_Field_07"/>
+                <xs:element minOccurs="0" ref="Misc_Field_08"/>
+                <xs:element minOccurs="0" ref="Misc_Field_09"/>
+                <xs:element minOccurs="0" ref="Misc_Field_10"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Release_Line_ID"/>
+    <xs:element name="SKU_Name"/>
+    <xs:element name="Quantity" type="xs:integer"/>
+    <xs:element name="Original_Ord_Nbr"/>
+    <xs:element name="Original_Ord_Line"/>
+    <xs:element name="Post_Shipped_Status"/>
+    <xs:element name="Post_Shipped_Status_Date"/>
+    <xs:element name="Misc_Field_01"/>
+    <xs:element name="Misc_Field_02"/>
+    <xs:element name="Misc_Field_03"/>
+    <xs:element name="Misc_Field_04"/>
+    <xs:element name="Misc_Field_05"/>
+    <xs:element name="Misc_Field_06"/>
+    <xs:element name="Misc_Field_07"/>
+    <xs:element name="Misc_Field_08"/>
+    <xs:element name="Misc_Field_09"/>
+    <xs:element name="Misc_Field_10"/>
+</xs:schema>
