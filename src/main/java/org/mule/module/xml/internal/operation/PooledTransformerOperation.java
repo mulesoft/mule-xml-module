@@ -9,6 +9,7 @@ package org.mule.module.xml.internal.operation;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.mule.module.xml.api.EntityExpansion.NEVER;
 import static org.mule.runtime.core.api.util.ExceptionUtils.extractOfType;
+
 import org.mule.module.xml.api.EntityExpansion;
 import org.mule.module.xml.internal.error.TransformationException;
 import org.mule.module.xml.internal.util.LocalEntityResolver;
@@ -25,16 +26,15 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
+import java.util.Optional;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
-
-import java.util.Optional;
-
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.PoolUtils;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.xml.sax.EntityResolver;
@@ -128,7 +128,7 @@ public abstract class PooledTransformerOperation<K, T> implements Initialisable,
   }
 
   private <T> GenericObjectPool<T> createPool(BasePooledObjectFactory<T> factory) {
-    return new GenericObjectPool<>(factory, defaultPoolConfig());
+    return new GenericObjectPool<>(PoolUtils.synchronizedPooledFactory(factory), defaultPoolConfig());
   }
 
   private GenericObjectPoolConfig defaultPoolConfig() {
