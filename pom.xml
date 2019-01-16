@@ -131,7 +131,6 @@
                         <discoverRuntimes>
                             <product>ALL</product>
                             <includeSnapshots>true</includeSnapshots>
-                            <minMuleVersion>4.1.1</minMuleVersion>
                         </discoverRuntimes>
                     </runtimeConfiguration>
                 </configuration>
