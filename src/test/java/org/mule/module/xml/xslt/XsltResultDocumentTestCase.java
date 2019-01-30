@@ -15,6 +15,7 @@ import org.mule.runtime.core.api.util.UUID;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -29,18 +30,27 @@ public class XsltResultDocumentTestCase extends XmlTestCase {
 
   @Rule
   public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  private String cities;
+  private File outputFile;
 
   @Override
   protected String getConfigFile() {
     return "xsl/xslt-result-document-config.xml";
   }
 
+  @Before
+  public void setUp() throws Exception {
+    cities = IOUtils.getResourceAsString(INPUT_FILE, getClass());
+    outputFile = temporaryFolder.newFile(UUID.getUUID());
+  }
+
+  @Test
+  public void writeToFileOneTime() throws Exception {
+    executeFlowAndValidateOutput(cities, outputFile);
+  }
+
   @Test
   public void writeToSameFileSeveralTimes() throws Exception {
-    String cities = IOUtils.getResourceAsString(INPUT_FILE, getClass());
-
-    File outputFile = temporaryFolder.newFile(UUID.getUUID());
-
     executeFlowAndValidateOutput(cities, outputFile);
     executeFlowAndValidateOutput(cities, outputFile);
   }
