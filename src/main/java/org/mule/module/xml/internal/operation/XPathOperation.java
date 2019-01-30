@@ -79,9 +79,10 @@ public class XPathOperation extends PooledTransformerOperation<XPathOperation.XP
                                    @Optional @Content @NullSafe Map<String, Object> contextProperties,
                                    @Optional @NullSafe List<NamespaceMapping> namespaces,
                                    @Optional @ParameterDsl(allowInlineDefinition = false) NamespaceDirectory namespaceDirectory,
-                                   @Config XmlModule config) {
+                                   @Config XmlModule config,
+                                   @Optional(defaultValue = "false") boolean keepTrailingNewlines) {
     return withTransformer(new XPathKey(xpath, mergeNamespaces(namespaces, namespaceDirectory)),
-                           evaluator -> evaluator.evaluate(toDOMNode(content, documentBuilderFactory), contextProperties));
+                           evaluator -> evaluator.keepingTrailingNewlines(keepTrailingNewlines).evaluate(toDOMNode(content, documentBuilderFactory), contextProperties));
   }
 
   private Collection<NamespaceMapping> mergeNamespaces(List<NamespaceMapping> namespaces, NamespaceDirectory directory) {

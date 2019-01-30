@@ -52,9 +52,10 @@ public class XPathFunction implements Initialisable, Startable, Stoppable {
    * @param xpath             the XPath script
    * @param content           the XML content on which the XPath is evaluated
    * @param contextProperties Properties that wil be made available to the transform context.
+   * @param keepTrailingNewlines Select whether to clean trailing newlines added by Saxon.
    * @return a List of Strings with all the matching elements
    */
-  public List<String> xpath(String xpath, InputStream content, Map<String, Object> contextProperties) {
-    return xpathOperation.xpathExtract(content, xpath, contextProperties, emptyList(), null, config);
+  public List<String> xpath(String xpath, InputStream content, Map<String, Object> contextProperties, boolean keepTrailingNewlines) {
+    return xpathOperation.xpathExtract(content, xpath, contextProperties, emptyList(), null, config, keepTrailingNewlines);
   }
 }
