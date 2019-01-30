@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.namespace.QName;
 import javax.xml.xquery.XQConnection;
@@ -105,9 +106,12 @@ public class XQueryOperation extends PooledTransformerOperation<String, XQPrepar
 
       List<String> results = new LinkedList<>();
 
+      Properties avoidNewLinesInXQItems = new Properties();
+      avoidNewLinesInXQItems.setProperty("indent", "no");
+
       while (result.next()) {
         XQItem item = result.getItem();
-        results.add(item.getItemAsString(null));
+        results.add(item.getItemAsString(avoidNewLinesInXQItems));
       }
 
       return results;

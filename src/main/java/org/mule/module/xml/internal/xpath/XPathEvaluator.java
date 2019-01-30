@@ -115,10 +115,20 @@ public class XPathEvaluator implements XPathVariableResolver {
     for (int i = 0; i < size; i++) {
       StringWriter sw = new StringWriter();
       toString.transform(new DOMSource(nodeList.item(i)), new StreamResult(sw));
-      strings.add(sw.toString());
+      // Since Saxon 9.9.1-1, the "indented" serializer options seems to add a new-line character
+      // after each DOM Node. Could not found a property to avoid this behaviour.
+      strings.add(cleanTrailingNewline(sw.toString()));
     }
 
     return strings;
+  }
+
+  private String cleanTrailingNewline(String line)
+  {
+    if (line.endsWith("\n")) {
+      line = line.substring(0,line.lastIndexOf("\n"));
+    }
+    return line;
   }
 
   /**
