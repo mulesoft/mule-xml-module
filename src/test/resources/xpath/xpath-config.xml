@@ -12,7 +12,7 @@
     </flow>
 
     <flow name="shakespeareLinesFunction">
-        <set-payload value="#[XmlModule::xpath('//LINE[contains(., \$word)]', payload, {'word': vars.word}, false)]" />
+        <set-payload value="#[XmlModule::xpath('//LINE[contains(., \$word)]', payload, {'word': vars.word})]" />
     </flow>
 
     <flow name="foreach">
@@ -26,7 +26,7 @@
 
     <flow name="foreachWithFunction">
         <set-variable variableName="accumulator" value="#[[]]" />
-        <foreach collection="#[XmlModule::xpath('//LINE', payload, {}, false)]">
+        <foreach collection="#[XmlModule::xpath('//LINE', payload, {})]">
             <set-variable variableName="accumulator" value="#[vars.accumulator + payload]" />
         </foreach>
         <set-payload value="#[vars.accumulator]" />
