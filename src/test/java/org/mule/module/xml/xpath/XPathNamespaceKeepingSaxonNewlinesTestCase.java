@@ -17,14 +17,13 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class XPathNamespaceTestCase extends XmlTestCase {
+public class XPathNamespaceKeepingSaxonNewlinesTestCase extends XmlTestCase {
 
   @Override
   protected void doSetUpBeforeMuleContextCreation() throws Exception {
-    // Tests developed according to old Saxon version, where no newlines where added at the
-    // end of xml results.
+    // Testing kept newlines. Setting property accordingly
     super.doSetUpBeforeMuleContextCreation();
-    System.setProperty("xmlModuleKeepNewlinesConfig", "false");
+    System.setProperty("xmlModuleKeepNewlinesConfig", "true");
   }
 
   @Override
@@ -50,11 +49,12 @@ public class XPathNamespaceTestCase extends XmlTestCase {
 
     assertThat(result, hasSize(1));
     String expected = "<ns1:echo xmlns:ns1=\"http://simple.component.mule.org/\"\n"
-        + "          xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">Hello!</ns1:echo>";
+        + "          xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">Hello!</ns1:echo>\n";
     assertThat(result.get(0), equalTo(expected));
   }
 
   private InputStream getEnvelope() {
     return getClass().getResourceAsStream("/request.xml");
   }
+
 }
