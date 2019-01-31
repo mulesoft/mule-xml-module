@@ -7,6 +7,7 @@
 package org.mule.module.xml.internal.operation;
 
 import static java.lang.String.format;
+import static javax.xml.transform.OutputKeys.INDENT;
 import static javax.xml.xquery.XQItemType.XQBASETYPE_BOOLEAN;
 import static javax.xml.xquery.XQItemType.XQBASETYPE_BYTE;
 import static javax.xml.xquery.XQItemType.XQBASETYPE_DOUBLE;
@@ -95,7 +96,8 @@ public class XQueryOperation extends PooledTransformerOperation<String, XQPrepar
   public List<String> xqueryTransform(@Content(primary = true) InputStream content,
                                       @Text String xquery,
                                       @Optional @Content @NullSafe Map<String, Object> contextProperties,
-                                      @Config XmlModule config) {
+                                      @Config XmlModule config,
+                                      @Optional(defaultValue = "false") boolean keepTrailingNewlines) {
 
     return withTransformer(xquery, transformer -> {
       bindParameters(transformer, contextProperties);
@@ -107,7 +109,11 @@ public class XQueryOperation extends PooledTransformerOperation<String, XQPrepar
       List<String> results = new LinkedList<>();
 
       Properties avoidNewLinesInXQItems = new Properties();
-      avoidNewLinesInXQItems.setProperty("indent", "no");
+
+      // If required, remove trailing new line characters from expression result
+      if (!keepTrailingNewlines) {
+        avoidNewLinesInXQItems.setProperty(INDENT, "no");
+      }
 
       while (result.next()) {
         XQItem item = result.getItem();
