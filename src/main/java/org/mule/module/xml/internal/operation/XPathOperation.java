@@ -82,7 +82,8 @@ public class XPathOperation extends PooledTransformerOperation<XPathOperation.XP
                                    @Config XmlModule config,
                                    @Optional(defaultValue = "false") boolean keepTrailingNewlines) {
     return withTransformer(new XPathKey(xpath, mergeNamespaces(namespaces, namespaceDirectory)),
-                           evaluator -> evaluator.keepingTrailingNewlines(keepTrailingNewlines).evaluate(toDOMNode(content, documentBuilderFactory), contextProperties));
+                           evaluator -> evaluator.keepingTrailingNewlines(keepTrailingNewlines)
+                               .evaluate(toDOMNode(content, documentBuilderFactory), contextProperties));
   }
 
   private Collection<NamespaceMapping> mergeNamespaces(List<NamespaceMapping> namespaces, NamespaceDirectory directory) {
