@@ -15,6 +15,7 @@ import org.mule.module.xml.internal.error.NullContextPropertyException;
 import org.mule.module.xml.internal.error.StandardXmlErrorTypeProvider;
 import org.mule.module.xml.internal.error.TransformationException;
 import org.mule.module.xml.internal.error.TransformerErrorListener;
+import org.mule.module.xml.internal.util.FileSchemeCorrectionOutputUriResolver;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.execution.Execution;
@@ -35,6 +36,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.Controller;
+import net.sf.saxon.lib.OutputURIResolver;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
@@ -81,6 +83,14 @@ public class XsltOperation extends PooledTransformerOperation<String, XsltTransf
     return withTransformer(xslt, transformer -> {
       bindParameters(transformer, contextProperties);
 
+      // TODO: Question: Should I put this in try-finally block to deal with the case something fails in between,
+      // and the transformer is left with the custom resolver?
+
+      // Save controller's OutputUriResolver to deal with transformer pooling
+      OutputURIResolver previousUriResolver = transformer.getUnderlyingController().getOutputURIResolver();
+      // Set URI scheme correction resolver
+      transformer.getUnderlyingController().setOutputURIResolver(new FileSchemeCorrectionOutputUriResolver());
+
       transformer.setErrorListener(errorListener);
       StringWriter writer = new StringWriter();
       Serializer out = (Serializer) transformer.getDestination();
@@ -89,6 +99,9 @@ public class XsltOperation extends PooledTransformerOperation<String, XsltTransf
 
       transformer.setSource(new DOMSource(node));
       transformer.transform();
+
+      // Restore previous resolver
+      transformer.getUnderlyingController().setOutputURIResolver(previousUriResolver);
 
       if (errorListener.getException().isPresent()) {
         throw errorListener.getException().get();
