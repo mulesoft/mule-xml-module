@@ -128,7 +128,7 @@ public class XPathEvaluator implements XPathVariableResolver {
 
   private String cleanTrailingNewlineIfNecessary(String line) {
     if (!keepTrailingNewlines && line.endsWith("\n")) {
-      line = line.substring(0, line.lastIndexOf("\n"));
+      line = line.substring(0, line.lastIndexOf('\n'));
     }
     return line;
   }
