@@ -6,6 +6,9 @@
  */
 package org.mule.module.xml.internal.util;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.xml.transform.Result;
 
 import net.sf.saxon.lib.StandardOutputResolver;
@@ -18,7 +21,6 @@ public class FileSchemeCorrectionOutputUriResolver extends StandardOutputResolve
 
   @Override
   public Result resolve(String href, String base) throws XPathException {
-    // TODO: Check this!
     // If neither baseUri is not null, nor the href has an URI scheme, the href will be
     // considered as an absolute file path
     if (base == null && !hasUriScheme(href)) {
@@ -28,6 +30,12 @@ public class FileSchemeCorrectionOutputUriResolver extends StandardOutputResolve
   }
 
   protected boolean hasUriScheme(String href) {
-    return href.matches(HAS_URI_SCHEME_REGEX);
+    URI parsedUri;
+    try {
+      parsedUri = new URI(href);
+      return parsedUri.getScheme() != null;
+    } catch (URISyntaxException e) {
+      return false;
+    }
   }
 }

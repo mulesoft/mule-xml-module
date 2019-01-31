@@ -56,20 +56,21 @@ public class XPathOperation extends PooledTransformerOperation<XPathOperation.XP
   /**
    * Evaluates an XPath expression the input content and returns the result.
    * <p>
-   * Because XPath expressions can match any number of individual elements, this operation
-   * returns a List of Strings. If no element matched the expression, an empty list will be
-   * returned.
+   * Because XPath expressions can match any number of individual elements, this operation returns a List of Strings. If no
+   * element matched the expression, an empty list will be returned.
    * <p>
-   * XPath expressions are also namespace aware, which is why this operation allows setting namespace
-   * mappings. These mappings will be merged with those optionally defined in the referenced namespace-directory,
-   * meaning that the evaluation will combine both sets of namespace mappings.
+   * XPath expressions are also namespace aware, which is why this operation allows setting namespace mappings. These mappings
+   * will be merged with those optionally defined in the referenced namespace-directory, meaning that the evaluation will combine
+   * both sets of namespace mappings.
    *
-   * @param content            the XML content on which the XPath is evaluated
-   * @param xpath              the XPath script
-   * @param contextProperties  Properties that wil be made available to the transform context.
-   * @param namespaces         namespace mappings that will be used in this evaluation. They will be combined with the ones in the config element
+   * @param content the XML content on which the XPath is evaluated
+   * @param xpath the XPath script
+   * @param contextProperties Properties that wil be made available to the transform context.
+   * @param namespaces namespace mappings that will be used in this evaluation. They will be combined with the ones in the config
+   *        element
    * @param namespaceDirectory the namespace directory from which take base namespace mappings
-   * @param config             the config
+   * @param config the config
+   * @param addTrailingNewlines adds a newline character (\n) at the end of every xml-part result
    * @return a List of Strings with all the matching elements
    */
   @Execution(CPU_INTENSIVE)
@@ -80,9 +81,9 @@ public class XPathOperation extends PooledTransformerOperation<XPathOperation.XP
                                    @Optional @NullSafe List<NamespaceMapping> namespaces,
                                    @Optional @ParameterDsl(allowInlineDefinition = false) NamespaceDirectory namespaceDirectory,
                                    @Config XmlModule config,
-                                   @Optional(defaultValue = "false") boolean keepTrailingNewlines) {
+                                   @Optional(defaultValue = "false") boolean addTrailingNewlines) {
     return withTransformer(new XPathKey(xpath, mergeNamespaces(namespaces, namespaceDirectory)),
-                           evaluator -> evaluator.keepingTrailingNewlines(keepTrailingNewlines)
+                           evaluator -> evaluator.keepingTrailingNewlines(addTrailingNewlines)
                                .evaluate(toDOMNode(content, documentBuilderFactory), contextProperties));
   }
 

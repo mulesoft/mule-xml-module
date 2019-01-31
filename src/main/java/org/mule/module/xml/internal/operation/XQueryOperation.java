@@ -85,10 +85,11 @@ public class XQueryOperation extends PooledTransformerOperation<String, XQPrepar
    * Uses XQuery to transform the input content. You can set transformation context properties which will be made available on the
    * XQuery execution
    *
-   * @param content           the XML content to transform
-   * @param xquery            The XQuery script definition
+   * @param content the XML content to transform
+   * @param xquery The XQuery script definition
    * @param contextProperties Properties that wil be made available to the transform context.
-   * @param config            the config object
+   * @param config the config object
+   * @param addTrailingNewlines adds a newline character (\n) at the end of every xml-part result
    * @return the transformed document
    */
   @Execution(CPU_INTENSIVE)
@@ -97,7 +98,7 @@ public class XQueryOperation extends PooledTransformerOperation<String, XQPrepar
                                       @Text String xquery,
                                       @Optional @Content @NullSafe Map<String, Object> contextProperties,
                                       @Config XmlModule config,
-                                      @Optional(defaultValue = "false") boolean keepTrailingNewlines) {
+                                      @Optional(defaultValue = "false") boolean addTrailingNewlines) {
 
     return withTransformer(xquery, transformer -> {
       bindParameters(transformer, contextProperties);
@@ -111,7 +112,7 @@ public class XQueryOperation extends PooledTransformerOperation<String, XQPrepar
       Properties avoidNewLinesInXQItems = new Properties();
 
       // If required, remove trailing new line characters from expression result
-      if (!keepTrailingNewlines) {
+      if (!addTrailingNewlines) {
         avoidNewLinesInXQItems.setProperty(INDENT, "no");
       }
 
