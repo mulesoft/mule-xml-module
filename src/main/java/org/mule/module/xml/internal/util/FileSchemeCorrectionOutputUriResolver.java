@@ -17,7 +17,6 @@ import net.sf.saxon.trans.XPathException;
 public class FileSchemeCorrectionOutputUriResolver extends StandardOutputResolver {
 
   private static final String PATH_URI_SCHEME = "file:";
-  private static final String HAS_URI_SCHEME_REGEX = "^[a-zA-Z]+:.+$";
 
   @Override
   public Result resolve(String href, String base) throws XPathException {
