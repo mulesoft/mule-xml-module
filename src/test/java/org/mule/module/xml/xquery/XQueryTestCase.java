@@ -71,6 +71,16 @@ public class XQueryTestCase extends XmlTestCase {
   }
 
   @Test
+  public void groupByKeepingNewlines() throws Exception {
+    // Tests some XQuery query, but using the keepNewlines property
+    List<String> elements = xquery("groupByKeepingNewlines");
+
+    assertThat(elements, hasSize(2));
+    assertThat(elements.get(0), equalTo("<odd>1 3 5 7 9</odd>\n"));
+    assertThat(elements.get(1), equalTo("<even>2 4 6 8 10</even>\n"));
+  }
+
+  @Test
   public void books() throws Exception {
     List<String> nodes = xquery("books", getBooks());
     assertThat(nodes, hasSize(6));
