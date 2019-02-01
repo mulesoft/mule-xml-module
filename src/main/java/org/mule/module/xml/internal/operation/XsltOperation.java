@@ -82,9 +82,6 @@ public class XsltOperation extends PooledTransformerOperation<String, XsltTransf
     return withTransformer(xslt, transformer -> {
       bindParameters(transformer, contextProperties);
 
-      // Set URI scheme correction resolver
-      transformer.getUnderlyingController().setOutputURIResolver(new FileSchemeCorrectionOutputUriResolver());
-
       transformer.setErrorListener(errorListener);
       StringWriter writer = new StringWriter();
       Serializer out = (Serializer) transformer.getDestination();
@@ -151,6 +148,9 @@ public class XsltOperation extends PooledTransformerOperation<String, XsltTransf
         Serializer out = proc.newSerializer();
         XsltTransformer trans = exp.load();
         trans.setDestination(out);
+
+        // Set URI scheme correction resolver
+        trans.getUnderlyingController().setOutputURIResolver(new FileSchemeCorrectionOutputUriResolver());
 
         return trans;
       }
