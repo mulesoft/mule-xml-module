@@ -19,11 +19,11 @@
     </xml-module:namespace-directory>
     
     <flow name="xpathWithFullNs">
-        <xml-module:xpath-extract xpath="/soap:Envelope/soap:Body/mule:echo/mule:echo" namespaceDirectory="fullNs" keepTrailingNewlines="${xmlModuleKeepNewlinesConfig}"/>
+        <xml-module:xpath-extract xpath="/soap:Envelope/soap:Body/mule:echo/mule:echo" namespaceDirectory="fullNs" addTrailingNewlines="${xmlModuleShouldAddTrailingNewlinesProperty}"/>
     </flow>
 
     <flow name="xpathWithMergedNs">
-        <xml-module:xpath-extract xpath="/soap:Envelope/soap:Body/mule:echo/mule:echo" namespaceDirectory="partialNs" keepTrailingNewlines="${xmlModuleKeepNewlinesConfig}">
+        <xml-module:xpath-extract xpath="/soap:Envelope/soap:Body/mule:echo/mule:echo" namespaceDirectory="partialNs" addTrailingNewlines="${xmlModuleShouldAddTrailingNewlinesProperty}">
             <xml-module:namespaces>
                 <xml-module:namespace prefix="mule" uri="http://simple.component.mule.org/"/>
             </xml-module:namespaces>

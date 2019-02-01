@@ -100,7 +100,7 @@
     </flow>
 
     <flow name="groupByKeepingNewlines">
-        <xml-module:xquery-transform keepTrailingNewlines="true">
+        <xml-module:xquery-transform addTrailingNewlines="true">
             <xml-module:xquery>
                 <![CDATA[
                    xquery version "3.0";

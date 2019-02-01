@@ -6,24 +6,44 @@
  */
 package org.mule.module.xml.xpath;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import org.mule.module.xml.XmlTestCase;
+import org.mule.tck.junit4.rule.SystemProperty;
+import org.mule.test.runner.RunnerDelegateTo;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.Parameterized;
 
+@RunnerDelegateTo(Parameterized.class)
 public class XPathNamespaceTestCase extends XmlTestCase {
+  private static final String KEEP_NEWLINES_PROPERTY_NAME = "xmlModuleShouldAddTrailingNewlinesProperty";
+  private final static String COMMON_EXPECTED_ANSWER = "<ns1:echo xmlns:ns1=\"http://simple.component.mule.org/\"\n"
+      + "          xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">Hello!</ns1:echo>";
 
-  @Override
-  protected void doSetUpBeforeMuleContextCreation() throws Exception {
-    // Tests developed according to old Saxon version, where no newlines where added at the
-    // end of xml results.
-    super.doSetUpBeforeMuleContextCreation();
-    System.setProperty("xmlModuleKeepNewlinesConfig", "false");
+  @Rule
+  public SystemProperty shouldAddTrailingNewlines;
+  private String expectedAnswer;
+
+  public XPathNamespaceTestCase(String addTrailingNewlinesProperty, String expectedAnswer) {
+    this.expectedAnswer = expectedAnswer;
+    // Set a systemProperty consumed by the test app
+    this.shouldAddTrailingNewlines = new SystemProperty(KEEP_NEWLINES_PROPERTY_NAME, addTrailingNewlinesProperty);
+  }
+
+  @Parameterized.Parameters(name = "Testing with 'should add trailing new lines' property at: {0}")
+  public static Collection<Object[]> data() {
+    return asList(new Object[][] {
+        {"false", COMMON_EXPECTED_ANSWER},
+        {"true", COMMON_EXPECTED_ANSWER + "\n"}
+    });
   }
 
   @Override
@@ -48,9 +68,7 @@ public class XPathNamespaceTestCase extends XmlTestCase {
             .run().getMessage().getPayload().getValue();
 
     assertThat(result, hasSize(1));
-    String expected = "<ns1:echo xmlns:ns1=\"http://simple.component.mule.org/\"\n"
-        + "          xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">Hello!</ns1:echo>";
-    assertThat(result.get(0), equalTo(expected));
+    assertThat(result.get(0), equalTo(expectedAnswer));
   }
 
   private InputStream getEnvelope() {
