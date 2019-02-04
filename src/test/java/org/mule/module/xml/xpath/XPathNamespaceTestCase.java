@@ -24,6 +24,7 @@ import org.junit.runners.Parameterized;
 
 @RunnerDelegateTo(Parameterized.class)
 public class XPathNamespaceTestCase extends XmlTestCase {
+
   private static final String KEEP_NEWLINES_PROPERTY_NAME = "xmlModuleShouldAddTrailingNewlinesProperty";
   private final static String COMMON_EXPECTED_ANSWER = "<ns1:echo xmlns:ns1=\"http://simple.component.mule.org/\"\n"
       + "          xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">Hello!</ns1:echo>";
