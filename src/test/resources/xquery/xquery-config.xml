@@ -98,4 +98,22 @@
             <xml-module:context-properties>#[{'books' : vars.books, 'cities': vars.cities}]</xml-module:context-properties>
         </xml-module:xquery-transform>
     </flow>
+
+    <flow name="groupByKeepingNewlines">
+        <xml-module:xquery-transform addTrailingNewlines="true">
+            <xml-module:xquery>
+                <![CDATA[
+                   xquery version "3.0";
+                    declare variable $document external;
+                    for $n in 1 to 10
+                        group by $mod := $n mod 2
+                        return
+                            if ($mod = 0) then
+                                <even>{$n}</even>
+                            else
+                                <odd>{$n}</odd>
+                ]]>
+            </xml-module:xquery>
+        </xml-module:xquery-transform>
+    </flow>
 </mule>

@@ -27,6 +27,8 @@ import java.util.Map;
  */
 public class XPathFunction implements Initialisable, Startable, Stoppable {
 
+  // By default, remove trailing newlines, to be backward compatible with previous xml-module versions.
+  private static final boolean DEFAULT_KEEP_TRAILING_NEWLINES_CONFIGURATION = false;
   private XPathOperation xpathOperation;
   private XmlModule config = new XmlModule();
 
@@ -49,12 +51,13 @@ public class XPathFunction implements Initialisable, Startable, Stoppable {
   /**
    * Evaluates the {@code xpath} expression over the given XML {@code content} using the {@code contextProperties}.
    *
-   * @param xpath             the XPath script
-   * @param content           the XML content on which the XPath is evaluated
+   * @param xpath the XPath script
+   * @param content the XML content on which the XPath is evaluated
    * @param contextProperties Properties that wil be made available to the transform context.
    * @return a List of Strings with all the matching elements
    */
   public List<String> xpath(String xpath, InputStream content, Map<String, Object> contextProperties) {
-    return xpathOperation.xpathExtract(content, xpath, contextProperties, emptyList(), null, config);
+    return xpathOperation.xpathExtract(content, xpath, contextProperties, emptyList(), null, config,
+                                       DEFAULT_KEEP_TRAILING_NEWLINES_CONFIGURATION);
   }
 }
