@@ -15,6 +15,7 @@ import org.mule.module.xml.internal.error.NullContextPropertyException;
 import org.mule.module.xml.internal.error.StandardXmlErrorTypeProvider;
 import org.mule.module.xml.internal.error.TransformationException;
 import org.mule.module.xml.internal.error.TransformerErrorListener;
+import org.mule.module.xml.internal.util.FileSchemeCorrectionOutputUriResolver;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.execution.Execution;
@@ -147,6 +148,9 @@ public class XsltOperation extends PooledTransformerOperation<String, XsltTransf
         Serializer out = proc.newSerializer();
         XsltTransformer trans = exp.load();
         trans.setDestination(out);
+
+        // Set URI scheme correction resolver
+        trans.getUnderlyingController().setOutputURIResolver(new FileSchemeCorrectionOutputUriResolver());
 
         return trans;
       }

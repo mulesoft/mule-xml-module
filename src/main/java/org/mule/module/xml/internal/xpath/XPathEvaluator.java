@@ -42,26 +42,28 @@ import org.w3c.dom.NodeList;
  * <p>
  * Each instance accepts one XPath expression and keeps a compiled version of it for better performance.
  * <p>
- * This evaluator is reusable, as long as the {@link #reset()} method is invoked in between evaluations. It
- * is not thread-safe though.
+ * This evaluator is reusable, as long as the {@link #reset()} method is invoked in between evaluations. It is not thread-safe
+ * though.
  * <p>
- * It also implements the {@link XPathVariableResolver} interface in order to bind {@link #contextProperties}
- * to variables defined in the XPath script.
+ * It also implements the {@link XPathVariableResolver} interface in order to bind {@link #contextProperties} to variables defined
+ * in the XPath script.
  *
  * @since 1.0.
  */
 public class XPathEvaluator implements XPathVariableResolver {
 
+  private static final boolean DEFAULT_KEEP_TRAILING_NEWLINES = false;
   private final XPathExpression xpathExpression;
   private Map<String, Object> contextProperties;
   private Transformer toString;
+  private boolean keepTrailingNewlines;
 
   /**
    * Creates a new instance
    *
-   * @param expression   the xpath expression
+   * @param expression the xpath expression
    * @param xpathFactory the {@link XPathFactory} used to compile the expression
-   * @param namespaces   namespace mappings
+   * @param namespaces namespace mappings
    */
   public XPathEvaluator(String expression, XPathFactory xpathFactory, Collection<NamespaceMapping> namespaces) {
     XPath xpath = xpathFactory.newXPath();
@@ -83,16 +85,17 @@ public class XPathEvaluator implements XPathVariableResolver {
     toString.setOutputProperty(OMIT_XML_DECLARATION, "yes");
     toString.setOutputProperty(INDENT, "yes");
 
+    keepTrailingNewlines = DEFAULT_KEEP_TRAILING_NEWLINES;
+
     reset();
   }
 
   /**
    * Evaluates the expression on the {@code input} node, using the given {@code contextProperties}.
    *
-   * After invoking this method, the consumer <b>MUST</b> invoke the {@link #reset()} method in order to reuse
-   * this evaluator.
+   * After invoking this method, the consumer <b>MUST</b> invoke the {@link #reset()} method in order to reuse this evaluator.
    *
-   * @param input             the base node of the evaluation
+   * @param input the base node of the evaluation
    * @param contextProperties context properties
    * @return a List of strings with the matching elements
    */
@@ -115,15 +118,23 @@ public class XPathEvaluator implements XPathVariableResolver {
     for (int i = 0; i < size; i++) {
       StringWriter sw = new StringWriter();
       toString.transform(new DOMSource(nodeList.item(i)), new StreamResult(sw));
-      strings.add(sw.toString());
+      // Since Saxon 9.9.1-1, the "indented" serializer options seems to add a new-line character
+      // after each DOM Node. Could not found a property to avoid this behaviour.
+      strings.add(cleanTrailingNewlineIfNecessary(sw.toString()));
     }
 
     return strings;
   }
 
+  private String cleanTrailingNewlineIfNecessary(String line) {
+    if (!keepTrailingNewlines && line.endsWith("\n")) {
+      line = line.substring(0, line.lastIndexOf('\n'));
+    }
+    return line;
+  }
+
   /**
-   * Resolves the given variable against the context properties
-   * passed on the {@link #evaluate(Node, Map)} method
+   * Resolves the given variable against the context properties passed on the {@link #evaluate(Node, Map)} method
    *
    * @param variableName the variable name
    * @return the variable value. Might be {@code null}
@@ -139,5 +150,10 @@ public class XPathEvaluator implements XPathVariableResolver {
    */
   public void reset() {
     contextProperties = emptyMap();
+  }
+
+  public XPathEvaluator keepingTrailingNewlines(boolean shouldKeepTrailingNewlines) {
+    keepTrailingNewlines = shouldKeepTrailingNewlines;
+    return this;
   }
 }
