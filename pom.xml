@@ -48,14 +48,14 @@
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
-            <version>9.8.0-6</version>
+            <version>${saxon-he.version}</version>
         </dependency>
 
         <!-- XQuery support -->
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
-            <version>${saxonVersion}</version>
+            <version>${saxon-he.version}</version>
             <classifier>xqj</classifier>
         </dependency>
         <dependency>
