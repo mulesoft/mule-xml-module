@@ -22,6 +22,7 @@ import org.junit.rules.TemporaryFolder;
 
 public class XsltResultDocumentTestCase extends XmlTestCase {
 
+  private static final String FILE = "file:///";
   private static final String INPUT_FILE = "cities.xml";
   private static final String OUTPUT_FILE_PROPERTY = "outputFile";
   private static final String FLOW_NAME = "listCities";
@@ -58,7 +59,7 @@ public class XsltResultDocumentTestCase extends XmlTestCase {
   private void executeFlowAndValidateOutput(String payload, File outputFile) throws Exception {
     outputFile.delete();
     flowRunner(FLOW_NAME).withPayload(payload)
-        .withVariable(OUTPUT_FILE_PROPERTY, outputFile.getAbsolutePath())
+        .withVariable(OUTPUT_FILE_PROPERTY, FILE + outputFile.getAbsolutePath())
         .run();
 
     assertThat(FileUtils.readFileToString(outputFile), is(EXPECTED_OUTPUT));
