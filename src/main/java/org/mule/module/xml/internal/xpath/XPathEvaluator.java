@@ -12,6 +12,8 @@ import static java.util.stream.Collectors.toMap;
 import static javax.xml.transform.OutputKeys.INDENT;
 import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
 import static javax.xml.xpath.XPathConstants.NODESET;
+import static org.w3c.dom.Node.ATTRIBUTE_NODE;
+
 import org.mule.module.xml.api.NamespaceMapping;
 import org.mule.module.xml.internal.error.InvalidXPathExpressionException;
 import org.mule.module.xml.internal.error.TransformationException;
@@ -61,9 +63,9 @@ public class XPathEvaluator implements XPathVariableResolver {
   /**
    * Creates a new instance
    *
-   * @param expression the xpath expression
+   * @param expression   the xpath expression
    * @param xpathFactory the {@link XPathFactory} used to compile the expression
-   * @param namespaces namespace mappings
+   * @param namespaces   namespace mappings
    */
   public XPathEvaluator(String expression, XPathFactory xpathFactory, Collection<NamespaceMapping> namespaces) {
     XPath xpath = xpathFactory.newXPath();
@@ -92,10 +94,10 @@ public class XPathEvaluator implements XPathVariableResolver {
 
   /**
    * Evaluates the expression on the {@code input} node, using the given {@code contextProperties}.
-   *
+   * <p>
    * After invoking this method, the consumer <b>MUST</b> invoke the {@link #reset()} method in order to reuse this evaluator.
    *
-   * @param input the base node of the evaluation
+   * @param input             the base node of the evaluation
    * @param contextProperties context properties
    * @return a List of strings with the matching elements
    */
@@ -116,11 +118,16 @@ public class XPathEvaluator implements XPathVariableResolver {
     final int size = nodeList.getLength();
     List<String> strings = new ArrayList<>(size);
     for (int i = 0; i < size; i++) {
-      StringWriter sw = new StringWriter();
-      toString.transform(new DOMSource(nodeList.item(i)), new StreamResult(sw));
-      // Since Saxon 9.9.1-1, the "indented" serializer options seems to add a new-line character
-      // after each DOM Node. Could not found a property to avoid this behaviour.
-      strings.add(cleanTrailingNewlineIfNecessary(sw.toString()));
+      Node item = nodeList.item(i);
+      if (item.getNodeType() == ATTRIBUTE_NODE) {
+        strings.add(item.getTextContent());
+      } else {
+        StringWriter sw = new StringWriter();
+        toString.transform(new DOMSource(item), new StreamResult(sw));
+        // Since Saxon 9.9.1-1, the "indented" serializer options seems to add a new-line character
+        // after each DOM Node. Could not found a property to avoid this behaviour.
+        strings.add(cleanTrailingNewlineIfNecessary(sw.toString()));
+      }
     }
 
     return strings;

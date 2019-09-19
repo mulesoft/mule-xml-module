@@ -37,6 +37,16 @@ public class XPathTestCase extends XmlTestCase {
   }
 
   @Test
+  public void xpathGetAttributeValue() throws Exception {
+    List<String> results = (List<String>) flowRunner("getAttributes")
+        .withPayload(getOthello())
+        .run().getMessage().getPayload().getValue();
+
+    assertThat(results, hasSize(1));
+    assertThat(results.get(0), equalTo("latin"));
+  }
+
+  @Test
   public void xpathFunctionWithParametersWithStreamPayload() throws Exception {
     assertLines("shakespeareLinesFunction", getOthello());
   }
