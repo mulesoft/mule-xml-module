@@ -139,16 +139,19 @@ public class SchemaValidatorOperation
         SchemaFactory schemaFactory = createWithConfig(key.expandEntities.isAcceptExternalEntities(),
                                                        key.expandEntities.isExpandInternalEntities())
                                                            .getSchemaFactory(key.schemaLanguage);
-        schemaFactory.setResourceResolver(resourceResolver);
 
-        Schema schema;
-        try {
-          schema = schemaFactory.newSchema(schemas);
-        } catch (SAXException e) {
-          throw new InvalidSchemaException("The supplied schemas were not valid. " + e.getMessage(), e);
+        synchronized (schemaFactory) {
+          schemaFactory.setResourceResolver(resourceResolver);
+
+          Schema schema;
+          try {
+            schema = schemaFactory.newSchema(schemas);
+          } catch (SAXException e) {
+            throw new InvalidSchemaException("The supplied schemas were not valid. " + e.getMessage(), e);
+          }
+
+          return schema.newValidator();
         }
-
-        return schema.newValidator();
       }
 
       @Override

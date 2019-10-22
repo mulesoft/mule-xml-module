@@ -19,10 +19,21 @@
         <munit:execution>
             <foreach collection="#[1 to vars.concurrentValidations]">
                 <async>
-                    <xml-module:validate-schema schemas="validation/concurrent-schema.xsd">
-                        <xml-module:content>#[readUrl('classpath://validation/concurrent-validation.xml', 'text/plain')]
-                        </xml-module:content>
-                    </xml-module:validate-schema>
+                    <choice>
+                        <when expression="(payload mod 2) == 0" >
+                            <xml-module:validate-schema schemas="validation/concurrent-schema.xsd">
+                                <xml-module:content>#[readUrl('classpath://validation/concurrent-validation.xml', 'text/plain')]
+                                </xml-module:content>
+                            </xml-module:validate-schema>
+                        </when>
+						
+                        <when expression="(payload mod 2) == 1" >
+                            <xml-module:validate-schema schemas="validation/concurrent-schema-alt.xsd">
+                                <xml-module:content>#[readUrl('classpath://validation/concurrent-validation-alt.xml', 'text/plain')]
+                                </xml-module:content>
+                            </xml-module:validate-schema>
+                        </when>
+                    </choice>
                     <munit-tools:queue/>
                 </async>
             </foreach>
