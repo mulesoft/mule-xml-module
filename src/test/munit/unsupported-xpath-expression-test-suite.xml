@@ -12,12 +12,39 @@
 
     <munit:config name="unsupported-xpath-expression-test-suite.xml"/>
 
-    <munit:test name="xpathFailsWithUnsupportedMessage" expectedErrorDescription="Unsupported XPath expression">
+    <munit:test name="xpathReturningUriFailsWithUnsupportedMessage" expectedErrorDescription="Unsupported XPath expression">
         <munit:behavior>
             <set-payload value="#[MunitTools::getResourceAsStream('unsupported-xpath-expression.xml')]" mimeType="text/xml"/>
         </munit:behavior>
         <munit:execution>
             <xml-module:xpath-extract xpath="namespace-uri(/*)"/>
+        </munit:execution>
+    </munit:test>
+
+    <munit:test name="xpathReturningIntegerFailsWithUnsupportedMessage" expectedErrorDescription="Unsupported XPath expression">
+        <munit:behavior>
+            <set-payload value="#[MunitTools::getResourceAsStream('unsupported-xpath-expression.xml')]" mimeType="text/xml"/>
+        </munit:behavior>
+        <munit:execution>
+            <xml-module:xpath-extract xpath="count(//demo)"/>
+        </munit:execution>
+    </munit:test>
+
+    <munit:test name="xpathReturningStringFailsWithUnsupportedMessage" expectedErrorDescription="Unsupported XPath expression">
+        <munit:behavior>
+            <set-payload value="#[MunitTools::getResourceAsStream('unsupported-xpath-expression.xml')]" mimeType="text/xml"/>
+        </munit:behavior>
+        <munit:execution>
+            <xml-module:xpath-extract xpath="concat('a','b')"/>
+        </munit:execution>
+    </munit:test>
+
+    <munit:test name="xpathReturningBooleanFailsWithUnsupportedMessage" expectedErrorDescription="Unsupported XPath expression">
+        <munit:behavior>
+            <set-payload value="#[MunitTools::getResourceAsStream('unsupported-xpath-expression.xml')]" mimeType="text/xml"/>
+        </munit:behavior>
+        <munit:execution>
+            <xml-module:xpath-extract xpath="boolean(//bookstore2)"/>
         </munit:execution>
     </munit:test>
 
