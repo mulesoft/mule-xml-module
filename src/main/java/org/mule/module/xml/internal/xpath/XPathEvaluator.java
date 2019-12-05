@@ -113,7 +113,7 @@ public class XPathEvaluator implements XPathVariableResolver {
       return toStringList((NodeList) xpathExpression.evaluate(input, NODESET));
     } catch (XPathExpressionException e) {
       // TODO: MULE-17826 Use s9api instead of JAXP for executing xpath expressions because of it allows to check result type after evaluation
-      if (e.getMessage() != null && e.getMessage().contains(UNSUPPORTED_XPATH_EXPRESSION_MESSAGE))
+      if (e.getMessage().contains(UNSUPPORTED_XPATH_EXPRESSION_MESSAGE))
         throw unsupportedException(e);
       throw transformationException(e);
     } catch (Exception e) {
