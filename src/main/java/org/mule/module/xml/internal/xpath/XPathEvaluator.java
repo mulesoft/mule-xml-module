@@ -35,6 +35,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathVariableResolver;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -55,10 +56,13 @@ import org.w3c.dom.NodeList;
 public class XPathEvaluator implements XPathVariableResolver {
 
   private static final boolean DEFAULT_KEEP_TRAILING_NEWLINES = false;
+  private static final String UNSUPPORTED_XPATH_EXPRESSION_MESSAGE =
+      "Cannot convert XPath value to Java object: required class is org.w3c.dom.NodeList";
   private final XPathExpression xpathExpression;
   private Map<String, Object> contextProperties;
   private Transformer toString;
   private boolean keepTrailingNewlines;
+  private String expression;
 
   /**
    * Creates a new instance
@@ -68,6 +72,7 @@ public class XPathEvaluator implements XPathVariableResolver {
    * @param namespaces   namespace mappings
    */
   public XPathEvaluator(String expression, XPathFactory xpathFactory, Collection<NamespaceMapping> namespaces) {
+    this.expression = expression;
     XPath xpath = xpathFactory.newXPath();
     xpath.setXPathVariableResolver(this);
     xpath.setNamespaceContext(new XPathNamespaceContext(namespaces.stream()
@@ -106,12 +111,28 @@ public class XPathEvaluator implements XPathVariableResolver {
 
     try {
       return toStringList((NodeList) xpathExpression.evaluate(input, NODESET));
+    } catch (XPathExpressionException e) {
+      // TODO: MULE-17826 Use s9api instead of JAXP for executing xpath expressions because of it allows to check result type after evaluation
+      if (e.getMessage().contains(UNSUPPORTED_XPATH_EXPRESSION_MESSAGE))
+        throw unsupportedException(e);
+      throw transformationException(e);
     } catch (Exception e) {
-      throw new TransformationException(
-                                        format("Failed to evaluate XPath expression '%s'. %s", xpathExpression.toString(),
-                                               e.getMessage()),
-                                        e);
+      throw transformationException(e);
     }
+  }
+
+  private TransformationException unsupportedException(XPathExpressionException e) {
+    return new TransformationException(
+                                       format("Unsupported XPath expression '%s'. %s", expression,
+                                              e.getMessage()),
+                                       e);
+  }
+
+  private TransformationException transformationException(Exception e) {
+    return new TransformationException(
+                                       format("Failed to evaluate XPath expression '%s'. %s", expression,
+                                              e.getMessage()),
+                                       e);
   }
 
   private List<String> toStringList(NodeList nodeList) throws TransformerException {
