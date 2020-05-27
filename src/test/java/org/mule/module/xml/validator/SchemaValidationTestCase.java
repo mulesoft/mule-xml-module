@@ -9,6 +9,8 @@ package org.mule.module.xml.validator;
 import static java.util.stream.Collectors.joining;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mule.functional.api.exception.ExpectedError.none;
 import static org.mule.module.xml.api.XmlError.SCHEMA_NOT_HONOURED;
@@ -109,6 +111,8 @@ public class SchemaValidationTestCase extends XmlTestCase {
 
   private void assertViolations(List<SchemaViolation> problems) {
     assertThat(problems, hasSize(1));
+    assertThat(problems.get(0).getColumnNumber(), not(equalTo(-1)));
+    assertThat(problems.get(0).getLineNumber(), not(equalTo(-1)));
     assertThat(problems.get(0).getDescription(),
                equalTo(
                        "cvc-complex-type.2.4.a: Invalid content was found starting with element 'fail'. One of '{used}' is expected."));

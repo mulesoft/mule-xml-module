@@ -46,13 +46,13 @@ import java.util.stream.Stream;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.w3c.dom.Node;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -85,9 +85,8 @@ public class SchemaValidatorOperation
                              @Content(primary = true) InputStream content,
                              @Config XmlModule config) {
 
-    Node node = toDOMNode(content, documentBuilderFactory);
+    StreamSource source = new StreamSource(content);
     withTransformer(new SchemaKey(schemas, schemaLanguage.getLanguageUri(), expandEntities), validator -> {
-
       // set again since the reset() method may nullify this
       validator.setResourceResolver(resourceResolver);
 
@@ -114,7 +113,7 @@ public class SchemaValidatorOperation
       });
 
       try {
-        validator.validate(new DOMSource(node));
+        validator.validate(source);
       } catch (SAXParseException e) {
         throw new TransformationException("Failed to validate schema. " + e.getMessage(), e);
       } catch (IOException e) {
