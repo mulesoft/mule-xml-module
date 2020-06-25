@@ -44,9 +44,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
@@ -55,6 +56,7 @@ import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -84,9 +86,8 @@ public class SchemaValidatorOperation
                              @Optional(defaultValue = "W3C") SchemaLanguage schemaLanguage,
                              @Content(primary = true) InputStream content,
                              @Config XmlModule config) {
-
-    StreamSource source = new StreamSource(content);
     withTransformer(new SchemaKey(schemas, schemaLanguage.getLanguageUri(), expandEntities), validator -> {
+
       // set again since the reset() method may nullify this
       validator.setResourceResolver(resourceResolver);
 
@@ -113,7 +114,13 @@ public class SchemaValidatorOperation
       });
 
       try {
-        validator.validate(source);
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setNamespaceAware(true);
+        spf.setFeature("http://xml.org/sax/features/external-general-entities", expandEntities.isAcceptExternalEntities());
+        spf.setFeature("http://xml.org/sax/features/external-parameter-entities", expandEntities.isAcceptExternalEntities());
+        spf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", !expandEntities.isExpandInternalEntities());
+        spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", expandEntities.isExpandInternalEntities());
+        validator.validate(new SAXSource(spf.newSAXParser().getXMLReader(), new InputSource(content)));
       } catch (SAXParseException e) {
         throw new TransformationException("Failed to validate schema. " + e.getMessage(), e);
       } catch (IOException e) {
