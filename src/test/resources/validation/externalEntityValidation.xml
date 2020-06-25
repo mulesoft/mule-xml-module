@@ -1,4 +1,4 @@
-<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "file:///Users/fabian.gonzalez/projects/mule-uber/mule4-uber/mule-xml-module/src/test/resources/validation/external.txt"> ]>
+<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "src/test/resources/validation/external.txt"> ]>
 <this>
   <is>&xxe;</is>
   <basic>xml</basic>
