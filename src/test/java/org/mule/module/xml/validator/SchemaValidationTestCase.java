@@ -38,9 +38,9 @@ public class SchemaValidationTestCase extends XmlTestCase {
 
   private static final String VALID_XML_FILE = "validation/validation1.xml";
   private static final String INVALID_XML_FILE = "validation/validation2.xml";
-  
+
   private static final String EXTERNAL_ENTITY_XML_FILE = "validation/externalEntityValidation.xml";
-  
+
   private static final String BILLION_LAUGHS_XML_FILE = "validation/billionLaughs.xml";
 
   @Rule
@@ -87,46 +87,23 @@ public class SchemaValidationTestCase extends XmlTestCase {
     expectValidationFailure();
     validate("validateSchemaWithReferences", getInvalidPayload(), INCLUDE_SCHEMA);
   }
-  
-  
-  
+
   @Test
   public void externalEntityValidation() throws Exception {
     expectedBehaviourOnDTDDisallowed();
     validate(getExternalEntityPayload(), SIMPLE_SCHEMA);
   }
-  
+
   @Test
   public void billionLaughs() throws Exception {
     expectedBehaviourOnDTDDisallowed();
     validate(getBillionLaughsPayload(), SIMPLE_SCHEMA);
   }
 
-  private void expectedBehaviourOnDTDDisallowed() {
-    expectedError.expectErrorType(ERROR_NAMESPACE, TRANSFORMATION.name());
-    expectedError.expectEvent(new BaseMatcher<CoreEvent>() {
-
-      @Override
-      public boolean matches(Object item) {
-        CoreEvent event = (CoreEvent) item;
-        assertThat(event.getError().get().getDescription(), containsString(DOCTYPE_IS_DISALLOWED_STRING));
-
-        return true;
-      }
-
-      @Override
-      public void describeTo(Description description) {
-        description.appendText("Error validation failed");
-      }
-    });
-  }
-  
   @Test
   public void externalEntityValidationWithExpandEntitiesALL() throws Exception {
     validate("validateSchemaWithReferences", getExternalEntityPayload(), SIMPLE_SCHEMA);
   }
-  
-  
 
   private void expectValidationFailure() {
     expectedError.expectErrorType(ERROR_NAMESPACE, SCHEMA_NOT_HONOURED.name());
@@ -157,6 +134,26 @@ public class SchemaValidationTestCase extends XmlTestCase {
                        "cvc-complex-type.2.4.a: Invalid content was found starting with element 'fail'. One of '{used}' is expected."));
   }
 
+
+  private void expectedBehaviourOnDTDDisallowed() {
+    expectedError.expectErrorType(ERROR_NAMESPACE, TRANSFORMATION.name());
+    expectedError.expectEvent(new BaseMatcher<CoreEvent>() {
+
+      @Override
+      public boolean matches(Object item) {
+        CoreEvent event = (CoreEvent) item;
+        assertThat(event.getError().get().getDescription(), containsString(DOCTYPE_IS_DISALLOWED_STRING));
+
+        return true;
+      }
+
+      @Override
+      public void describeTo(Description description) {
+        description.appendText("Error validation failed");
+      }
+    });
+  }
+
   private Event validate(InputStream payload, String... schemas) throws Exception {
     return validate("validateSchema", payload, schemas);
   }
@@ -183,11 +180,11 @@ public class SchemaValidationTestCase extends XmlTestCase {
   private InputStream getInvalidPayload() {
     return getResourceAsStream(INVALID_XML_FILE);
   }
-  
+
   private InputStream getExternalEntityPayload() {
     return getResourceAsStream(EXTERNAL_ENTITY_XML_FILE);
   }
-  
+
   private InputStream getBillionLaughsPayload() {
     return getResourceAsStream(BILLION_LAUGHS_XML_FILE);
   }

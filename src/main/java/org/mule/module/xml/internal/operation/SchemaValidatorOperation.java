@@ -119,7 +119,8 @@ public class SchemaValidatorOperation
         spf.setFeature("http://xml.org/sax/features/external-general-entities", expandEntities.isAcceptExternalEntities());
         spf.setFeature("http://xml.org/sax/features/external-parameter-entities", expandEntities.isAcceptExternalEntities());
         spf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", !expandEntities.isExpandInternalEntities());
-        spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", expandEntities.isExpandInternalEntities());
+        spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",
+                       expandEntities.isExpandInternalEntities());
         validator.validate(new SAXSource(spf.newSAXParser().getXMLReader(), new InputSource(content)));
       } catch (SAXParseException e) {
         throw new TransformationException("Failed to validate schema. " + e.getMessage(), e);
