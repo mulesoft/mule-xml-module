@@ -134,7 +134,6 @@ public class SchemaValidationTestCase extends XmlTestCase {
                        "cvc-complex-type.2.4.a: Invalid content was found starting with element 'fail'. One of '{used}' is expected."));
   }
 
-
   private void expectedBehaviourOnDTDDisallowed() {
     expectedError.expectErrorType(ERROR_NAMESPACE, TRANSFORMATION.name());
     expectedError.expectEvent(new BaseMatcher<CoreEvent>() {
