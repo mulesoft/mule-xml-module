@@ -7,18 +7,14 @@
 package org.mule.module.xml.validator;
 
 import static java.util.stream.Collectors.joining;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mule.functional.api.exception.ExpectedError.none;
 import static org.mule.module.xml.api.XmlError.SCHEMA_NOT_HONOURED;
-import static org.mule.runtime.core.api.util.xmlsecurity.XMLSecureFactories.EXTERNAL_ENTITIES_PROPERTY;
-import org.mule.functional.api.exception.ExpectedError;
-import org.mule.module.xml.XmlTestCase;
-import org.mule.module.xml.api.SchemaViolation;
-import org.mule.runtime.api.event.Event;
-import org.mule.runtime.core.api.event.CoreEvent;
-import org.mule.tck.junit4.rule.SystemProperty;
+import static org.mule.module.xml.api.XmlError.TRANSFORMATION;
 
 import java.io.InputStream;
 import java.util.List;
@@ -28,19 +24,24 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mule.functional.api.exception.ExpectedError;
+import org.mule.module.xml.XmlTestCase;
+import org.mule.module.xml.api.SchemaViolation;
+import org.mule.runtime.api.event.Event;
+import org.mule.runtime.core.api.event.CoreEvent;
 
 public class SchemaValidationTestCase extends XmlTestCase {
 
-
-  // this is disabled (secure) by default, so we need to change it for the test
-  @Rule
-  public SystemProperty externalEntities = new SystemProperty(EXTERNAL_ENTITIES_PROPERTY, "true");
-
+  private static final String DOCTYPE_IS_DISALLOWED_STRING = "DOCTYPE is disallowed";
   private static final String SIMPLE_SCHEMA = "validation/schema1.xsd";
   private static final String INCLUDE_SCHEMA = "validation/schema-with-include.xsd";
 
   private static final String VALID_XML_FILE = "validation/validation1.xml";
   private static final String INVALID_XML_FILE = "validation/validation2.xml";
+
+  private static final String EXTERNAL_ENTITY_XML_FILE = "validation/externalEntityValidation.xml";
+
+  private static final String BILLION_LAUGHS_XML_FILE = "validation/billionLaughs.xml";
 
   @Rule
   public ExpectedError expectedError = none();
@@ -87,6 +88,23 @@ public class SchemaValidationTestCase extends XmlTestCase {
     validate("validateSchemaWithReferences", getInvalidPayload(), INCLUDE_SCHEMA);
   }
 
+  @Test
+  public void externalEntityValidation() throws Exception {
+    expectedBehaviourOnDTDDisallowed();
+    validate(getExternalEntityPayload(), SIMPLE_SCHEMA);
+  }
+
+  @Test
+  public void billionLaughs() throws Exception {
+    expectedBehaviourOnDTDDisallowed();
+    validate(getBillionLaughsPayload(), SIMPLE_SCHEMA);
+  }
+
+  @Test
+  public void externalEntityValidationWithExpandEntitiesALL() throws Exception {
+    validate("validateSchemaWithReferences", getExternalEntityPayload(), SIMPLE_SCHEMA);
+  }
+
   private void expectValidationFailure() {
     expectedError.expectErrorType(ERROR_NAMESPACE, SCHEMA_NOT_HONOURED.name());
     expectedError.expectEvent(new BaseMatcher<CoreEvent>() {
@@ -109,9 +127,30 @@ public class SchemaValidationTestCase extends XmlTestCase {
 
   private void assertViolations(List<SchemaViolation> problems) {
     assertThat(problems, hasSize(1));
+    assertThat(problems.get(0).getColumnNumber(), not(equalTo(-1)));
+    assertThat(problems.get(0).getLineNumber(), not(equalTo(-1)));
     assertThat(problems.get(0).getDescription(),
                equalTo(
                        "cvc-complex-type.2.4.a: Invalid content was found starting with element 'fail'. One of '{used}' is expected."));
+  }
+
+  private void expectedBehaviourOnDTDDisallowed() {
+    expectedError.expectErrorType(ERROR_NAMESPACE, TRANSFORMATION.name());
+    expectedError.expectEvent(new BaseMatcher<CoreEvent>() {
+
+      @Override
+      public boolean matches(Object item) {
+        CoreEvent event = (CoreEvent) item;
+        assertThat(event.getError().get().getDescription(), containsString(DOCTYPE_IS_DISALLOWED_STRING));
+
+        return true;
+      }
+
+      @Override
+      public void describeTo(Description description) {
+        description.appendText("Error validation failed");
+      }
+    });
   }
 
   private Event validate(InputStream payload, String... schemas) throws Exception {
@@ -139,6 +178,14 @@ public class SchemaValidationTestCase extends XmlTestCase {
 
   private InputStream getInvalidPayload() {
     return getResourceAsStream(INVALID_XML_FILE);
+  }
+
+  private InputStream getExternalEntityPayload() {
+    return getResourceAsStream(EXTERNAL_ENTITY_XML_FILE);
+  }
+
+  private InputStream getBillionLaughsPayload() {
+    return getResourceAsStream(BILLION_LAUGHS_XML_FILE);
   }
 
   private InputStream getResourceAsStream(String path) {

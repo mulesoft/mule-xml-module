@@ -1,0 +1,10 @@
+<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "src/test/resources/validation/external.txt"> ]>
+<this>
+  <is>&xxe;</is>
+  <basic>xml</basic>
+  <that>will be</that>
+  <used>for</used>
+  <really>really</really>
+  <really>really</really>
+  <simple>validation</simple>
+</this>
