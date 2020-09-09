@@ -26,7 +26,7 @@
         <xqj-api.version>1.0</xqj-api.version>
         <commons-io.version>2.6</commons-io.version>
         <guava.version>27.1-jre</guava.version>
-        <commons-pool2.version>2.8.0</commons-pool2.version>
+        <commons-pool2.version>2.8.1</commons-pool2.version>
         <xmlunit.version>1.6</xmlunit.version>
 
         <munit.input.directory>src/test/munit</munit.input.directory>
