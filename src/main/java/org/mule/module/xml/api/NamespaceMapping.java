@@ -26,7 +26,7 @@ public class NamespaceMapping {
    */
   @Parameter
   @Expression(NOT_SUPPORTED)
-  private String prefix;
+  protected String prefix;
 
   /**
    * The namespace URI
@@ -34,7 +34,7 @@ public class NamespaceMapping {
   @Parameter
   @Expression(NOT_SUPPORTED)
   @Path(acceptsUrls = true, location = EXTERNAL)
-  private String uri;
+  protected String uri;
 
   public String getPrefix() {
     return prefix;

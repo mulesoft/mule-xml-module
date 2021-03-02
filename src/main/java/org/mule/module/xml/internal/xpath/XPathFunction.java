@@ -71,27 +71,17 @@ public class XPathFunction implements Initialisable, Startable, Stoppable {
                             @Optional Map<String, String> ns) {
     List<NamespaceMapping> namespaces = new ArrayList<>();
     if (ns != null && !ns.isEmpty()) {
-      try {
-        Field prefixField = NamespaceMapping.class
-            .getDeclaredField("prefix");
-        prefixField.setAccessible(true);
-        Field uriField = NamespaceMapping.class
-            .getDeclaredField("uri");
-        uriField.setAccessible(true);
-
         for (Map.Entry<String, String> entry : ns.entrySet()) {
-          NamespaceMapping namespaceMapping = new NamespaceMapping();
-          prefixField.set(namespaceMapping, entry.getKey());
-          uriField.set(namespaceMapping, entry.getValue());
-          namespaces.add(namespaceMapping);
+          namespaces.add(new NamespaceMappingEntry(entry.getKey(), entry.getValue()));
         }
-        prefixField.setAccessible(false);
-        uriField.setAccessible(false);
-      } catch (NoSuchFieldException | IllegalAccessException e) {
-        LOGGER.error("xpath", e);
-      }
     }
     return xpathOperation.xpathExtract(content, xpath, contextProperties, namespaces, null, config,
                                        DEFAULT_KEEP_TRAILING_NEWLINES_CONFIGURATION);
+  }
+  class NamespaceMappingEntry extends NamespaceMapping {
+    NamespaceMappingEntry(String prefix, String uri){
+      this.prefix = prefix;
+      this.uri = uri;
+    }
   }
 }
