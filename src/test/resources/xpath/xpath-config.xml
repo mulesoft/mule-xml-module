@@ -16,11 +16,11 @@
     </flow>
 
     <flow name="testNamespaceDefault">
-        <set-payload value="#[XmlModule::xpath('/b:Libro/b:Titulo', payload, {}, {b:'http://www.libros.org/2001/XMLSchema'})]" />
+        <set-payload value="#[XmlModule::xpath('/b:Libro/b:Titulo', payload, {}, [{prefix:'b', uri:'http://www.libros.org/2001/XMLSchema'}])]" />
     </flow>
 
     <flow name="testNamespaceDefaultText">
-        <set-payload value="#[XmlModule::xpath('/b:Libro/b:Titulo/text()', payload, {}, {b:'http://www.libros.org/2001/XMLSchema'})]" />
+        <set-payload value="#[XmlModule::xpath('/b:Libro/b:Titulo/text()', payload, {}, [{prefix:'b', uri:'http://www.libros.org/2001/XMLSchema'}])]" />
     </flow>
 
     <flow name="testNamespaceDefaultError">

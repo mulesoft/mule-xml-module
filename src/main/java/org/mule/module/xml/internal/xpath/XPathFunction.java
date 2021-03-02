@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -64,24 +65,15 @@ public class XPathFunction implements Initialisable, Startable, Stoppable {
    * @param xpath the XPath script
    * @param content the XML content on which the XPath is evaluated
    * @param contextProperties Properties that will be made available to the transform context.
-   * @param ns Namespaces map.
+   * @param ns NamespaceMapping Maps a prefix to a namespace URI
    * @return a List of Strings with all the matching elements
    */
   public List<String> xpath(String xpath, InputStream content, Map<String, Object> contextProperties,
-                            @Optional Map<String, String> ns) {
+                            @Optional NamespaceMapping... ns) {
     List<NamespaceMapping> namespaces = new ArrayList<>();
-    if (ns != null && !ns.isEmpty()) {
-        for (Map.Entry<String, String> entry : ns.entrySet()) {
-          namespaces.add(new NamespaceMappingEntry(entry.getKey(), entry.getValue()));
-        }
-    }
+    if (ns != null)
+      namespaces.addAll(Arrays.asList(ns));
     return xpathOperation.xpathExtract(content, xpath, contextProperties, namespaces, null, config,
                                        DEFAULT_KEEP_TRAILING_NEWLINES_CONFIGURATION);
-  }
-  class NamespaceMappingEntry extends NamespaceMapping {
-    NamespaceMappingEntry(String prefix, String uri){
-      this.prefix = prefix;
-      this.uri = uri;
-    }
   }
 }

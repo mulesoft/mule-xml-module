@@ -14,6 +14,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mule.runtime.core.api.util.IOUtils.getResourceAsStream;
 import org.mule.module.xml.XmlTestCase;
+import org.mule.module.xml.api.NamespaceMapping;
+import org.mule.module.xml.internal.xpath.XPathFunction;
 import org.mule.runtime.core.api.util.IOUtils;
 
 import java.io.IOException;
