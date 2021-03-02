@@ -9,13 +9,10 @@ package org.mule.module.xml.xpath;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mule.runtime.core.api.util.IOUtils.getResourceAsStream;
 import org.mule.module.xml.XmlTestCase;
-import org.mule.module.xml.api.NamespaceMapping;
-import org.mule.module.xml.internal.xpath.XPathFunction;
 import org.mule.runtime.core.api.util.IOUtils;
 
 import java.io.IOException;
@@ -29,7 +26,7 @@ public class XPathTestCase extends XmlTestCase {
   private static final String HANDKERCHIEF = "handkerchief";
   private static final String FOR_THE_SAME_HANDKERCHIEF = "<LINE>For the same handkerchief?</LINE>";
   private static final String TAG_DEFAULT_XMLNS = "<Title xmlns=\"http://www.books.org/2001/XMLSchema\">Fundamentals</Title>";
-  private static final String TITULO_DEFAULT_XMLNS = "Fundamentals";
+  private static final String TITLE_DEFAULT_XMLNS = "Fundamentals";
   private static final Double LINES_COUNT = 3556D;
 
   @Override
@@ -87,7 +84,7 @@ public class XPathTestCase extends XmlTestCase {
         .withPayload(getTestNamespaceDefault())
         .run().getMessage().getPayload().getValue();
     assertThat(lines, hasSize(1));
-    assertThat(lines.get(0), equalTo(TITULO_DEFAULT_XMLNS));
+    assertThat(lines.get(0), equalTo(TITLE_DEFAULT_XMLNS));
   }
 
   @Test
