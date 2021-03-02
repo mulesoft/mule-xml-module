@@ -28,8 +28,8 @@ public class XPathTestCase extends XmlTestCase {
 
   private static final String HANDKERCHIEF = "handkerchief";
   private static final String FOR_THE_SAME_HANDKERCHIEF = "<LINE>For the same handkerchief?</LINE>";
-  private static final String TAG_DEFAULT_XMLNS = "<Titulo xmlns=\"http://www.libros.org/2001/XMLSchema\">Fundamentos</Titulo>";
-  private static final String TITULO_DEFAULT_XMLNS = "Fundamentos";
+  private static final String TAG_DEFAULT_XMLNS = "<Title xmlns=\"http://www.books.org/2001/XMLSchema\">Fundamentals</Title>";
+  private static final String TITULO_DEFAULT_XMLNS = "Fundamentals";
   private static final Double LINES_COUNT = 3556D;
 
   @Override
