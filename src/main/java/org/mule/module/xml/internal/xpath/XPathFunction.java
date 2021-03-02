@@ -6,11 +6,13 @@
  */
 package org.mule.module.xml.internal.xpath;
 
+import static java.util.Collections.emptyList;
 import static org.mule.module.xml.api.EntityExpansion.NEVER;
 
 import org.mule.module.xml.api.NamespaceMapping;
 import org.mule.module.xml.internal.XmlModule;
 import org.mule.module.xml.internal.operation.XPathOperation;
+import org.mule.module.xml.internal.operation.XQueryOperation;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -38,7 +40,7 @@ public class XPathFunction implements Initialisable, Startable, Stoppable {
   private static final Logger LOGGER = LoggerFactory.getLogger(XPathFunction.class);
 
   private XPathOperation xpathOperation;
-  private final XmlModule config = new XmlModule();
+  private XmlModule config = new XmlModule();
 
   @Override
   public void initialise() throws InitialisationException {
@@ -77,10 +79,10 @@ public class XPathFunction implements Initialisable, Startable, Stoppable {
             .getDeclaredField("uri");
         uriField.setAccessible(true);
 
-        for (Map.Entry<String, String> nsEntry : ns.entrySet()) {
+        for (Map.Entry<String, String> entry : ns.entrySet()) {
           NamespaceMapping namespaceMapping = new NamespaceMapping();
-          prefixField.set(namespaceMapping, nsEntry.getKey());
-          uriField.set(namespaceMapping, ns.get(nsEntry.getValue()));
+          prefixField.set(namespaceMapping, entry.getKey());
+          uriField.set(namespaceMapping, entry.getValue());
           namespaces.add(namespaceMapping);
         }
         prefixField.setAccessible(false);
