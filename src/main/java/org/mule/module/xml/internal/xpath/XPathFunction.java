@@ -6,8 +6,9 @@
  */
 package org.mule.module.xml.internal.xpath;
 
-import static java.util.Collections.emptyList;
 import static org.mule.module.xml.api.EntityExpansion.NEVER;
+
+import org.mule.module.xml.api.NamespaceMapping;
 import org.mule.module.xml.internal.XmlModule;
 import org.mule.module.xml.internal.operation.XPathOperation;
 import org.mule.runtime.api.exception.MuleException;
@@ -15,8 +16,13 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.lifecycle.Stoppable;
+import org.mule.runtime.extension.api.annotation.param.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +35,10 @@ public class XPathFunction implements Initialisable, Startable, Stoppable {
 
   // By default, remove trailing newlines, to be backward compatible with previous xml-module versions.
   private static final boolean DEFAULT_KEEP_TRAILING_NEWLINES_CONFIGURATION = false;
+  private static final Logger LOGGER = LoggerFactory.getLogger(XPathFunction.class);
+
   private XPathOperation xpathOperation;
-  private XmlModule config = new XmlModule();
+  private final XmlModule config = new XmlModule();
 
   @Override
   public void initialise() throws InitialisationException {
@@ -53,11 +61,35 @@ public class XPathFunction implements Initialisable, Startable, Stoppable {
    *
    * @param xpath the XPath script
    * @param content the XML content on which the XPath is evaluated
-   * @param contextProperties Properties that wil be made available to the transform context.
+   * @param contextProperties Properties that will be made available to the transform context.
+   * @param ns Namespaces map.
    * @return a List of Strings with all the matching elements
    */
-  public List<String> xpath(String xpath, InputStream content, Map<String, Object> contextProperties) {
-    return xpathOperation.xpathExtract(content, xpath, contextProperties, emptyList(), null, config,
+  public List<String> xpath(String xpath, InputStream content, Map<String, Object> contextProperties,
+                            @Optional Map<String, String> ns) {
+    List<NamespaceMapping> namespaces = new ArrayList<>();
+    if (ns != null && !ns.isEmpty()) {
+      try {
+        Field prefixField = NamespaceMapping.class
+            .getDeclaredField("prefix");
+        prefixField.setAccessible(true);
+        Field uriField = NamespaceMapping.class
+            .getDeclaredField("uri");
+        uriField.setAccessible(true);
+
+        for (Map.Entry<String, String> nsEntry : ns.entrySet()) {
+          NamespaceMapping namespaceMapping = new NamespaceMapping();
+          prefixField.set(namespaceMapping, nsEntry.getKey());
+          uriField.set(namespaceMapping, ns.get(nsEntry.getValue()));
+          namespaces.add(namespaceMapping);
+        }
+        prefixField.setAccessible(false);
+        uriField.setAccessible(false);
+      } catch (NoSuchFieldException | IllegalAccessException e) {
+        LOGGER.error("xpath", e);
+      }
+    }
+    return xpathOperation.xpathExtract(content, xpath, contextProperties, namespaces, null, config,
                                        DEFAULT_KEEP_TRAILING_NEWLINES_CONFIGURATION);
   }
 }

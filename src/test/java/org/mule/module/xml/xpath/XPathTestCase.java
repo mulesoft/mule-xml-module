@@ -9,6 +9,8 @@ package org.mule.module.xml.xpath;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mule.runtime.core.api.util.IOUtils.getResourceAsStream;
 import org.mule.module.xml.XmlTestCase;
@@ -24,6 +26,8 @@ public class XPathTestCase extends XmlTestCase {
 
   private static final String HANDKERCHIEF = "handkerchief";
   private static final String FOR_THE_SAME_HANDKERCHIEF = "<LINE>For the same handkerchief?</LINE>";
+  private static final String TAG_DEFAULT_XMLNS = "<Titulo xmlns=\"http://www.libros.org/2001/XMLSchema\">Fundamentos</Titulo>";
+  private static final String TITULO_DEFAULT_XMLNS = "Fundamentos";
   private static final Double LINES_COUNT = 3556D;
 
   @Override
@@ -53,7 +57,7 @@ public class XPathTestCase extends XmlTestCase {
 
   @Test
   public void xpathFunctionWithParametersWithStringPayload() throws Exception {
-    assertLines("shakespeareLinesFunction", getOthello());
+    assertLines("shakespeareLinesFunction", getOthelloString());
   }
 
   @Test
@@ -64,6 +68,32 @@ public class XPathTestCase extends XmlTestCase {
   @Test
   public void xpathFunctionWithParametersAndStringPayload() throws Exception {
     assertLines("shakespeareLinesFunction", getOthelloString());
+  }
+
+  @Test
+  public void xpathFunctionWithDefaultNamespaceTag() throws Exception {
+    List<String> lines = (List<String>) flowRunner("testNamespaceDefault")
+        .withPayload(getTestNamespaceDefault())
+        .run().getMessage().getPayload().getValue();
+    assertThat(lines, hasSize(1));
+    assertThat(lines.get(0), equalTo(TAG_DEFAULT_XMLNS));
+  }
+
+  @Test
+  public void xpathFunctionWithDefaultNamespaceText() throws Exception {
+    List<String> lines = (List<String>) flowRunner("testNamespaceDefaultText")
+        .withPayload(getTestNamespaceDefault())
+        .run().getMessage().getPayload().getValue();
+    assertThat(lines, hasSize(1));
+    assertThat(lines.get(0), equalTo(TITULO_DEFAULT_XMLNS));
+  }
+
+  @Test
+  public void xpathFunctionWithDefaultNamespaceError() throws Exception {
+    List<String> lines = (List<String>) flowRunner("testNamespaceDefaultError")
+        .withPayload(getTestNamespaceDefault())
+        .run().getMessage().getPayload().getValue();
+    assertThat(lines, hasSize(0));
   }
 
   @Test
@@ -101,5 +131,9 @@ public class XPathTestCase extends XmlTestCase {
 
   private String getOthelloString() throws IOException {
     return IOUtils.toString(getOthello());
+  }
+
+  private InputStream getTestNamespaceDefault() throws IOException {
+    return getResourceAsStream("test-namespace-default.xml", getClass());
   }
 }

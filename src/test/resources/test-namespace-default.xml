@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Libro xmlns="http://www.libros.org/2001/XMLSchema">
+    <Titulo>Fundamentos</Titulo>
+    <Autores>Allen Wyke</Autores>
+    <Autores>Andrew Watt</Autores>
+    <Editorial>Wiley</Editorial>
+</Libro>
