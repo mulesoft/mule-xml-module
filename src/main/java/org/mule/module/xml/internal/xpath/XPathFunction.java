@@ -6,24 +6,19 @@
  */
 package org.mule.module.xml.internal.xpath;
 
-import static java.util.Collections.emptyList;
 import static org.mule.module.xml.api.EntityExpansion.NEVER;
 
 import org.mule.module.xml.api.NamespaceMapping;
 import org.mule.module.xml.internal.XmlModule;
 import org.mule.module.xml.internal.operation.XPathOperation;
-import org.mule.module.xml.internal.operation.XQueryOperation;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.lifecycle.Stoppable;
 import org.mule.runtime.extension.api.annotation.param.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +33,6 @@ public class XPathFunction implements Initialisable, Startable, Stoppable {
 
   // By default, remove trailing newlines, to be backward compatible with previous xml-module versions.
   private static final boolean DEFAULT_KEEP_TRAILING_NEWLINES_CONFIGURATION = false;
-  private static final Logger LOGGER = LoggerFactory.getLogger(XPathFunction.class);
 
   private XPathOperation xpathOperation;
   private XmlModule config = new XmlModule();
