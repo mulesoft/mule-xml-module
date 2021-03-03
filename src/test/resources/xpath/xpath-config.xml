@@ -15,6 +15,18 @@
         <set-payload value="#[XmlModule::xpath('//LINE[contains(., \$word)]', payload, {'word': vars.word})]" />
     </flow>
 
+    <flow name="testNamespaceDefault">
+        <set-payload value="#[XmlModule::xpath('/b:Book/b:Title', payload, {}, [{prefix:'b', uri:'http://www.books.org/2001/XMLSchema'}])]" />
+    </flow>
+
+    <flow name="testNamespaceDefaultText">
+        <set-payload value="#[XmlModule::xpath('/b:Book/b:Title/text()', payload, {}, [{prefix:'b', uri:'http://www.books.org/2001/XMLSchema'}])]" />
+    </flow>
+
+    <flow name="testNamespaceDefaultError">
+        <set-payload value="#[XmlModule::xpath('/Book/Title/text()', payload, {})]" />
+    </flow>
+
     <flow name="getAttributes">
         <set-payload value="#[XmlModule::xpath('//TITLE/@language', payload, {'word': vars.word})]" />
     </flow>
