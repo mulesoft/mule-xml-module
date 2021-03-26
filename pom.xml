@@ -24,7 +24,7 @@
     <properties>
         <saxon-he.version>10.3</saxon-he.version>
         <xqj-api.version>1.0</xqj-api.version>
-        <guava.version>30.1-jre</guava.version>
+        <guava.version>30.1.1-jre</guava.version>
         <commons-pool2.version>2.9.0</commons-pool2.version>
         <xmlunit.version>1.6</xmlunit.version>
 
