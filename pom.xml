@@ -22,16 +22,16 @@
     </description>
 
     <properties>
-        <saxon-he.version>10.3</saxon-he.version>
+        <saxon-he.version>10.5</saxon-he.version>
         <xqj-api.version>1.0</xqj-api.version>
-        <guava.version>30.1-jre</guava.version>
+        <guava.version>30.1.1-jre</guava.version>
         <commons-pool2.version>2.9.0</commons-pool2.version>
         <xmlunit.version>1.6</xmlunit.version>
 
         <munit.input.directory>src/test/munit</munit.input.directory>
         <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
-        <munit.extensions.maven.plugin.version>1.1.0</munit.extensions.maven.plugin.version>
-        <munit.version>2.3.2</munit.version>
+        <munit.extensions.maven.plugin.version>1.1.1</munit.extensions.maven.plugin.version>
+        <munit.version>2.3.4</munit.version>
         <mavenResources.version>3.2.0</mavenResources.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
