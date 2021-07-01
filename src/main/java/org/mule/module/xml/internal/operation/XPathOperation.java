@@ -87,7 +87,7 @@ public class XPathOperation extends PooledTransformerOperation<XPathOperation.XP
                                .evaluate(toDOMNode(content, documentBuilderFactory), contextProperties));
   }
 
-  private Collection<NamespaceMapping> mergeNamespaces(List<NamespaceMapping> namespaces, NamespaceDirectory directory) {
+  Collection<NamespaceMapping> mergeNamespaces(List<NamespaceMapping> namespaces, NamespaceDirectory directory) {
     Collection<NamespaceMapping> merge = new HashSet<>();
     if (namespaces != null) {
       merge.addAll(namespaces);
