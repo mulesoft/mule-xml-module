@@ -13,6 +13,8 @@ import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Path;
 
+import java.util.Objects;
+
 /**
  * Maps a prefix to a namespace URI
  *
@@ -36,11 +38,35 @@ public class NamespaceMapping {
   @Path(acceptsUrls = true, location = EXTERNAL)
   private String uri;
 
+  public NamespaceMapping() {}
+
+  public NamespaceMapping(final String prefix, final String uri) {
+    this.prefix = prefix;
+    this.uri = uri;
+  }
+
   public String getPrefix() {
     return prefix;
   }
 
   public String getUri() {
     return uri;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    }
+    if (!(obj instanceof NamespaceMapping)) {
+      return false;
+    }
+    NamespaceMapping other = (NamespaceMapping) obj;
+    return Objects.equals(prefix, other.prefix) && Objects.equals(uri, other.uri);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(prefix, uri);
   }
 }
