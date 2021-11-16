@@ -131,7 +131,7 @@ public class SchemaValidatorOperation
           SchemaValidationException schemaValidationException =
               new SchemaValidationException("Input XML was not compliant with the schema. Check this error's Mule message for the "
                   + "list of problems (e.g: #[error.errorMessage.payload[0].description)", fatalErrors);
-          throw new InvalidInputXmlException("Could not validate schema because the input was not valid XML. ",
+          throw new InvalidInputXmlException("Cannot parse input XML because it is invalid.",
                                              schemaValidationException);
         }
         throw new TransformationException("Failed to validate schema. " + e.getMessage(), e);
