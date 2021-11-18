@@ -41,7 +41,7 @@
                 </xml-module:validate-schema>
                 <error-handler>
                     <on-error-continue type="XML-MODULE:SCHEMA_NOT_HONOURED">
-                        <set-variable variableName="invalidInputXMLExceptionThrown" value="#[true]" />
+                        <set-variable variableName="schemaNotHonouredExceptionThrown" value="#[true]" />
                         <set-variable variableName="columnNumber" value="#[error.muleMessage.typedValue[0].columnNumber]" />
                         <set-variable variableName="lineNumber" value="#[error.muleMessage.typedValue[0].lineNumber]" />
                     </on-error-continue>
@@ -50,9 +50,9 @@
 
         </munit:execution>
         <munit:validation>
-            <munit-tools:assert-equals actual="#[vars.invalidInputXMLExceptionThrown]" expected="#[true]" message="Invalid input XML exception not thrown" />
-            <munit-tools:assert-that expression="#[vars.columnNumber]" is="#[MunitTools::greaterThan(-1)]" message="Wrong column number" />
-            <munit-tools:assert-that expression="#[vars.lineNumber]" is="#[MunitTools::greaterThan(-1)]" message="Wrong line number" />
+            <munit-tools:assert-equals actual="#[vars.schemaNotHonouredExceptionThrown]" expected="#[true]" message="Invalid input XML exception not thrown" />
+            <munit-tools:assert-that expression="#[vars.columnNumber]" is="#[MunitTools::greaterThan(-1)]" message="Column number not set" />
+            <munit-tools:assert-that expression="#[vars.lineNumber]" is="#[MunitTools::greaterThan(-1)]" message="Line number not set" />
         </munit:validation>
     </munit:test>
 
