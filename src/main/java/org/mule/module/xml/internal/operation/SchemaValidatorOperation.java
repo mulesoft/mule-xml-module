@@ -92,6 +92,7 @@ public class SchemaValidatorOperation
       validator.setResourceResolver(resourceResolver);
 
       List<SchemaViolation> errors = new LinkedList<>();
+      List<SchemaViolation> fatalErrors = new LinkedList<>();
 
       validator.setErrorHandler(new ErrorHandler() {
 
@@ -105,6 +106,7 @@ public class SchemaValidatorOperation
 
         @Override
         public void fatalError(SAXParseException exception) {
+          fatalErrors.add(new SchemaViolation(exception.getLineNumber(), exception.getColumnNumber(), exception.getMessage()));
           trackError(exception);
         }
 
@@ -122,7 +124,16 @@ public class SchemaValidatorOperation
         spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",
                        expandEntities.isExpandInternalEntities());
         validator.validate(new SAXSource(spf.newSAXParser().getXMLReader(), new InputSource(content)));
+
       } catch (SAXParseException e) {
+
+        if (!fatalErrors.isEmpty()) {
+          SchemaValidationException schemaValidationException =
+              new SchemaValidationException("Input XML was not compliant with the schema. Check this error's Mule message for the "
+                  + "list of problems (e.g: #[error.errorMessage.payload[0].description)", fatalErrors);
+          throw new InvalidInputXmlException("Cannot parse input XML because it is invalid.",
+                                             schemaValidationException);
+        }
         throw new TransformationException("Failed to validate schema. " + e.getMessage(), e);
       } catch (IOException e) {
         throw new InvalidInputXmlException("Could not validate schema because the input was not valid XML. " + e.getMessage(), e);

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd">
+
+    <munit:config name="sax-schema-validation-test-suite.xml"/>
+
+    <munit:test name="validateXmlFilesWithErrors">
+        <munit:behavior>
+            <set-payload value='#["&lt;a&gt;&lt;/b"]'/>
+        </munit:behavior>
+        <munit:execution>
+            <try>
+                <xml-module:validate-schema schemas="validation/schema1.xsd"/>
+                <error-handler>
+                    <on-error-continue type="XML-MODULE:INVALID_INPUT_XML">
+                        <set-variable variableName="invalidInputXMLExceptionThrown" value="#[true]" />
+                    </on-error-continue>
+                </error-handler>
+            </try>
+
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[vars.invalidInputXMLExceptionThrown]" expected="#[true]" message="Invalid input XML exception not thrown" />
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="validateXmlFilesAgainstSchema">
+        <munit:execution>
+            <try>
+                <xml-module:validate-schema schemas="validation/schema1.xsd">
+                    <xml-module:content>#[readUrl('classpath://validation/validation2.xml', 'text/plain')]
+                    </xml-module:content>
+                </xml-module:validate-schema>
+                <error-handler>
+                    <on-error-continue type="XML-MODULE:SCHEMA_NOT_HONOURED">
+                        <set-variable variableName="schemaNotHonouredExceptionThrown" value="#[true]" />
+                        <set-variable variableName="columnNumber" value="#[error.muleMessage.typedValue[0].columnNumber]" />
+                        <set-variable variableName="lineNumber" value="#[error.muleMessage.typedValue[0].lineNumber]" />
+                    </on-error-continue>
+                </error-handler>
+            </try>
+
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[vars.schemaNotHonouredExceptionThrown]" expected="#[true]" message="Invalid input XML exception not thrown" />
+            <munit-tools:assert-that expression="#[vars.columnNumber]" is="#[MunitTools::greaterThan(-1)]" message="Column number not set" />
+            <munit-tools:assert-that expression="#[vars.lineNumber]" is="#[MunitTools::greaterThan(-1)]" message="Line number not set" />
+        </munit:validation>
+    </munit:test>
+
+</mule>

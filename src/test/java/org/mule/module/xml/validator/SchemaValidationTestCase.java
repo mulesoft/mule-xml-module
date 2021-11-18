@@ -14,7 +14,6 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mule.functional.api.exception.ExpectedError.none;
 import static org.mule.module.xml.api.XmlError.SCHEMA_NOT_HONOURED;
-import static org.mule.module.xml.api.XmlError.TRANSFORMATION;
 
 import java.io.InputStream;
 import java.util.List;
@@ -26,18 +25,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.api.exception.ExpectedError;
 import org.mule.module.xml.XmlTestCase;
+import org.mule.module.xml.api.SchemaValidationException;
 import org.mule.module.xml.api.SchemaViolation;
+import org.mule.module.xml.api.XmlError;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.core.api.event.CoreEvent;
 
 public class SchemaValidationTestCase extends XmlTestCase {
 
+  private static final String INVALID_INPUT_XML = "Cannot parse input XML because it is invalid.";
+  private static final String INVALID_INPUT_XML_STRING = "must be terminated by the matching end-tag";
   private static final String DOCTYPE_IS_DISALLOWED_STRING = "DOCTYPE is disallowed";
   private static final String SIMPLE_SCHEMA = "validation/schema1.xsd";
   private static final String INCLUDE_SCHEMA = "validation/schema-with-include.xsd";
 
   private static final String VALID_XML_FILE = "validation/validation1.xml";
   private static final String INVALID_XML_FILE = "validation/validation2.xml";
+  private static final String INVALID_INPUT_XML_FILE = "validation/validation4.xml";
 
   private static final String EXTERNAL_ENTITY_XML_FILE = "validation/externalEntityValidation.xml";
 
@@ -89,14 +93,20 @@ public class SchemaValidationTestCase extends XmlTestCase {
   }
 
   @Test
+  public void invalidInput() throws Exception {
+    expectedBehaviourOnInvalidInput(INVALID_INPUT_XML_STRING);
+    validate(getInvalidInputPayload(), SIMPLE_SCHEMA);
+  }
+
+  @Test
   public void externalEntityValidation() throws Exception {
-    expectedBehaviourOnDTDDisallowed();
+    expectedBehaviourOnInvalidInput(DOCTYPE_IS_DISALLOWED_STRING);
     validate(getExternalEntityPayload(), SIMPLE_SCHEMA);
   }
 
   @Test
   public void billionLaughs() throws Exception {
-    expectedBehaviourOnDTDDisallowed();
+    expectedBehaviourOnInvalidInput(DOCTYPE_IS_DISALLOWED_STRING);
     validate(getBillionLaughsPayload(), SIMPLE_SCHEMA);
   }
 
@@ -134,15 +144,21 @@ public class SchemaValidationTestCase extends XmlTestCase {
                        "cvc-complex-type.2.4.a: Invalid content was found starting with element 'fail'. One of '{used}' is expected."));
   }
 
-  private void expectedBehaviourOnDTDDisallowed() {
-    expectedError.expectErrorType(ERROR_NAMESPACE, TRANSFORMATION.name());
+  private void expectedBehaviourOnInvalidInput(String problemDescription) {
+    expectedError.expectErrorType(ERROR_NAMESPACE, XmlError.INVALID_INPUT_XML.name());
     expectedError.expectEvent(new BaseMatcher<CoreEvent>() {
 
       @Override
       public boolean matches(Object item) {
         CoreEvent event = (CoreEvent) item;
-        assertThat(event.getError().get().getDescription(), containsString(DOCTYPE_IS_DISALLOWED_STRING));
-
+        assertThat(event.getError().get().getDescription(), containsString(INVALID_INPUT_XML));
+        SchemaValidationException schemaValidationException =
+            (SchemaValidationException) event.getError().get().getCause().getCause();
+        List<SchemaViolation> problems =
+            (List<SchemaViolation>) schemaValidationException.getErrorMessage().getPayload().getValue();
+        assertThat(problems.get(0).getColumnNumber(), not(equalTo(-1)));
+        assertThat(problems.get(0).getLineNumber(), not(equalTo(-1)));
+        assertThat(problems.get(0).getDescription(), containsString(problemDescription));
         return true;
       }
 
@@ -178,6 +194,10 @@ public class SchemaValidationTestCase extends XmlTestCase {
 
   private InputStream getInvalidPayload() {
     return getResourceAsStream(INVALID_XML_FILE);
+  }
+
+  private InputStream getInvalidInputPayload() {
+    return getResourceAsStream(INVALID_INPUT_XML_FILE);
   }
 
   private InputStream getExternalEntityPayload() {
