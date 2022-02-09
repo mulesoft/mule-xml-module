@@ -26,6 +26,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import com.google.common.cache.CacheBuilder;
@@ -143,7 +144,7 @@ public abstract class PooledTransformerOperation<K, T> implements Initialisable,
     config.setTestWhileIdle(false);
     config.setTestOnCreate(false);
     config.setJmxEnabled(false);
-
+    config.setMinEvictableIdleTime(Duration.ofMillis(-1));
     return config;
   }
 
