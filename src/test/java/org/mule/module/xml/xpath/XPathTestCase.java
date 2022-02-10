@@ -23,11 +23,11 @@ import org.junit.Test;
 
 public class XPathTestCase extends XmlTestCase {
 
-  private static final String HANDKERCHIEF = "handkerchief";
-  private static final String FOR_THE_SAME_HANDKERCHIEF = "<LINE>For the same handkerchief?</LINE>";
+  private static final String THUNDER = "thunder";
+  private static final String THUNDER_LIGHTNING_OR_RAIN = "<LINE>In thunder, lightning, or in rain?</LINE>";
   private static final String TAG_DEFAULT_XMLNS = "<Title xmlns=\"http://www.books.org/2001/XMLSchema\">Fundamentals</Title>";
   private static final String TITLE_DEFAULT_XMLNS = "Fundamentals";
-  private static final Double LINES_COUNT = 3556D;
+  private static final Double LINES_COUNT = 2385D;
 
   @Override
   protected String getConfigFile() {
@@ -36,13 +36,13 @@ public class XPathTestCase extends XmlTestCase {
 
   @Test
   public void xpathWithParameters() throws Exception {
-    assertLines("shakespeareLines", getOthello());
+    assertLines("shakespeareLines", getMacbeth());
   }
 
   @Test
   public void xpathGetAttributeValue() throws Exception {
     List<String> results = (List<String>) flowRunner("getAttributes")
-        .withPayload(getOthello())
+        .withPayload(getMacbeth())
         .run().getMessage().getPayload().getValue();
 
     assertThat(results, hasSize(1));
@@ -51,22 +51,22 @@ public class XPathTestCase extends XmlTestCase {
 
   @Test
   public void xpathFunctionWithParametersWithStreamPayload() throws Exception {
-    assertLines("shakespeareLinesFunction", getOthello());
+    assertLines("shakespeareLinesFunction", getMacbeth());
   }
 
   @Test
   public void xpathFunctionWithParametersWithStringPayload() throws Exception {
-    assertLines("shakespeareLinesFunction", getOthelloString());
+    assertLines("shakespeareLinesFunction", getMacbethString());
   }
 
   @Test
   public void xpathFunctionWithParametersAndStreamPayload() throws Exception {
-    assertLines("shakespeareLinesFunction", getOthello());
+    assertLines("shakespeareLinesFunction", getMacbeth());
   }
 
   @Test
   public void xpathFunctionWithParametersAndStringPayload() throws Exception {
-    assertLines("shakespeareLinesFunction", getOthelloString());
+    assertLines("shakespeareLinesFunction", getMacbethString());
   }
 
   @Test
@@ -107,29 +107,29 @@ public class XPathTestCase extends XmlTestCase {
 
   private void assertForeach(String flowName) throws Exception {
     List<String> lines =
-        (List<String>) flowRunner(flowName).withPayload(getOthello()).run().getMessage().getPayload().getValue();
+        (List<String>) flowRunner(flowName).withPayload(getMacbeth()).run().getMessage().getPayload().getValue();
     assertThat(lines, hasSize(LINES_COUNT.intValue()));
   }
 
   private void assertLines(String flowName, Object payload) throws Exception {
     List<String> lines = (List<String>) flowRunner(flowName)
         .withPayload(payload)
-        .withVariable("word", HANDKERCHIEF)
+        .withVariable("word", THUNDER)
         .run().getMessage().getPayload().getValue();
 
-    assertThat(lines, hasSize(27));
-    assertThat(lines.stream().allMatch(v -> v.contains(HANDKERCHIEF)), is(true));
+    assertThat(lines, hasSize(3));
+    assertThat(lines.stream().allMatch(v -> v.contains(THUNDER)), is(true));
 
     String line = lines.get(0);
-    assertThat(line, equalTo(FOR_THE_SAME_HANDKERCHIEF));
+    assertThat(line, equalTo(THUNDER_LIGHTNING_OR_RAIN));
   }
 
-  private InputStream getOthello() throws IOException {
-    return getResourceAsStream("othello.xml", getClass());
+  private InputStream getMacbeth() throws IOException {
+    return getResourceAsStream("macbeth.xml", getClass());
   }
 
-  private String getOthelloString() throws IOException {
-    return IOUtils.toString(getOthello());
+  private String getMacbethString() throws IOException {
+    return IOUtils.toString(getMacbeth());
   }
 
   private InputStream getTestNamespaceDefault() throws IOException {
