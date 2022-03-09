@@ -22,7 +22,7 @@
     </description>
 
     <properties>
-        <saxon-he.version>10.6</saxon-he.version>
+        <saxon-he.version>10.7</saxon-he.version>
         <xqj-api.version>1.0</xqj-api.version>
         <guava.version>31.1-jre</guava.version>
         <commons-pool2.version>2.11.1</commons-pool2.version>
