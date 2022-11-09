@@ -180,11 +180,11 @@
         </SKU>
         <SKU>
             <WarehouseStockNo>
-                <StockNumber>0012wymaster</StockNumber>
+                <StockNumber>0012wymain</StockNumber>
                 <MerchantId>LC3P</MerchantId>
             </WarehouseStockNo>
             <ShipwireStockNo>3617104</ShipwireStockNo>
-            <Description>WHAT YOUTH ISSUE 12 MASTER</Description>
+            <Description>WHAT YOUTH ISSUE 12 MAIN</Description>
             <Quantity>3</Quantity>
             <ItemType>LickAndStick</ItemType>
             <Dimensions>
