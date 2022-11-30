@@ -52,7 +52,13 @@ public enum XmlError implements ErrorTypeDefinition<XmlError> {
   /**
    * The supplied schema is invalid
    */
-  INVALID_SCHEMA;
+  INVALID_SCHEMA,
+
+  /**
+   * There is an input error from schema and schema content
+   * Either schema and schema content must be provided and cannot be provided both.  
+   */
+  SCHEMA_INPUT_ERROR(MuleErrors.VALIDATION);
 
   private ErrorTypeDefinition<? extends Enum<?>> parentError;
 
