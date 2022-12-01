@@ -42,7 +42,13 @@ public class SchemaContent {
     return schemaName;
   }
 
+  public void setSchemaText(String schemaText) {
+    this.schemaText = schemaText;
+  }
 
+  public void setSchemaName(String schemaName) {
+    this.schemaName = schemaName;
+  }
 
   @Override
   public boolean equals(Object obj) {
