@@ -246,7 +246,6 @@ public class SchemaValidationTestCase extends XmlTestCase {
     String text = null;
     try (Reader reader = new InputStreamReader(inputStream)) {
       text = CharStreams.toString(reader);
-      System.out.println(text);
     } catch (IOException e) {
       e.printStackTrace();
     }
