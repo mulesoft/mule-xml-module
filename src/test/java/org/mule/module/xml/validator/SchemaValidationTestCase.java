@@ -15,7 +15,11 @@ import static org.junit.Assert.assertThat;
 import static org.mule.functional.api.exception.ExpectedError.none;
 import static org.mule.module.xml.api.XmlError.SCHEMA_NOT_HONOURED;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -25,16 +29,21 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.api.exception.ExpectedError;
 import org.mule.module.xml.XmlTestCase;
+import org.mule.module.xml.api.SchemaContent;
 import org.mule.module.xml.api.SchemaValidationException;
 import org.mule.module.xml.api.SchemaViolation;
 import org.mule.module.xml.api.XmlError;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.core.api.event.CoreEvent;
 
+import com.google.common.io.CharStreams;
+
 public class SchemaValidationTestCase extends XmlTestCase {
 
   private static final String INVALID_INPUT_XML = "Cannot parse input XML because it is invalid.";
   private static final String INVALID_INPUT_XML_STRING = "must be terminated by the matching end-tag";
+  private static final String SCHEMA_INPUT_ERROR_STRING =
+      "Either Schema or Schema Content must be provided, and you cannot provide both.";
   private static final String DOCTYPE_IS_DISALLOWED_STRING = "DOCTYPE is disallowed";
   private static final String SIMPLE_SCHEMA = "validation/schema1.xsd";
   private static final String INCLUDE_SCHEMA = "validation/schema-with-include.xsd";
@@ -82,6 +91,13 @@ public class SchemaValidationTestCase extends XmlTestCase {
   }
 
   @Test
+  public void extractErrorsUsingExpressionsWithSchemaContent() throws Exception {
+    Event event = validateFromSchemaContent("extractErrorsFromExceptionWithSchemaContent", getInvalidPayload(), SIMPLE_SCHEMA);
+    List<SchemaViolation> violations = (List<SchemaViolation>) event.getMessage().getPayload().getValue();
+    assertViolations(violations);
+  }
+
+  @Test
   public void validWithImport() throws Exception {
     validate("validateSchemaWithReferences", getValidPayload(), INCLUDE_SCHEMA);
   }
@@ -113,6 +129,18 @@ public class SchemaValidationTestCase extends XmlTestCase {
   @Test
   public void externalEntityValidationWithExpandEntitiesALL() throws Exception {
     validate("validateSchemaWithReferences", getExternalEntityPayload(), SIMPLE_SCHEMA);
+  }
+
+  @Test
+  public void invalidSchemaWithSchemaContent() throws Exception {
+    expectValidationFailure();
+    validateFromSchemaContent("validateSchemaWithSchemaContent", getInvalidPayload(), SIMPLE_SCHEMA);
+  }
+
+  @Test
+  public void schemaInputErrorWithSchemaContent() throws Exception {
+    expectedBehaviourOnSchemaInputError(SCHEMA_INPUT_ERROR_STRING);
+    validateFromSchemaContent("validateSchemaWithSchemaContent", getInvalidPayload(), null);
   }
 
   private void expectValidationFailure() {
@@ -169,6 +197,24 @@ public class SchemaValidationTestCase extends XmlTestCase {
     });
   }
 
+  private void expectedBehaviourOnSchemaInputError(String problemDescription) {
+    expectedError.expectErrorType(ERROR_NAMESPACE, XmlError.SCHEMA_INPUT_ERROR.name());
+    expectedError.expectEvent(new BaseMatcher<CoreEvent>() {
+
+      @Override
+      public boolean matches(Object item) {
+        CoreEvent event = (CoreEvent) item;
+        assertThat(event.getError().get().getDescription(), containsString(SCHEMA_INPUT_ERROR_STRING));
+        return true;
+      }
+
+      @Override
+      public void describeTo(Description description) {
+        description.appendText("Error validation failed");
+      }
+    });
+  }
+
   private Event validate(InputStream payload, String... schemas) throws Exception {
     return validate("validateSchema", payload, schemas);
   }
@@ -178,6 +224,37 @@ public class SchemaValidationTestCase extends XmlTestCase {
         .withPayload(payload)
         .withVariable("schemas", parseSchemas(schemas))
         .run();
+  }
+
+  private Event validateFromSchemaContent(String flowName, InputStream payload, String... schemas)
+      throws Exception {
+    List<SchemaContent> schemaContents = parseSchemaContent(schemas);
+    return flowRunner(flowName)
+        .withPayload(payload)
+        .withVariable("schemaContents", schemaContents)
+        .run();
+  }
+
+  private List<SchemaContent> parseSchemaContent(String... schemas) {
+    if (schemas == null || schemas.length == 0) {
+      return new ArrayList<SchemaContent>();
+    }
+
+    InputStream inputStream = getResourceAsStream(schemas[0]);
+    List<SchemaContent> schemaContents = new ArrayList<>();
+
+    String text = null;
+    try (Reader reader = new InputStreamReader(inputStream)) {
+      text = CharStreams.toString(reader);
+      System.out.println(text);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    SchemaContent schemaContent = new SchemaContent(text, "schema1.xsd");
+    schemaContents.add(schemaContent);
+
+    return schemaContents;
   }
 
   private String parseSchemas(String... schemas) {

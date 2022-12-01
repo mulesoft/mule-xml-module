@@ -8,6 +8,10 @@
     <flow name="validateSchema">
         <xml-module:validate-schema schemas="#[vars.schemas]" />
     </flow>
+    
+    <flow name="validateSchemaWithSchemaContent">
+        <xml-module:validate-schema schemaContents="#[vars.schemaContents]" />
+    </flow>
 
     <flow name="validateSchemaWithReferences">
         <xml-module:validate-schema schemas="#[vars.schemas]" expandEntities="ALL"/>
@@ -16,6 +20,22 @@
     <flow name="extractErrorsFromException">
         <try>
             <xml-module:validate-schema schemas="#[vars.schemas]" />
+            <error-handler>
+                <on-error-continue type="XML-MODULE:SCHEMA_NOT_HONOURED">
+                    <set-variable variableName="aggregator" value="#[[]]" />
+                    <foreach collection="#[error.errorMessage.payload]">
+                        <set-variable variableName="aggregator" value="#[vars.aggregator + payload]" />
+                        <logger level="ERROR" message="#['At line: $(payload.lineNumber), column: $(payload.columnNumber) -> $(payload.description)']" />
+                    </foreach>
+                    <set-payload value="#[vars.aggregator]" />
+                </on-error-continue>
+            </error-handler>
+        </try>
+    </flow>
+    
+    <flow name="extractErrorsFromExceptionWithSchemaContent">
+        <try>
+            <xml-module:validate-schema schemaContents="#[vars.schemaContents]" />
             <error-handler>
                 <on-error-continue type="XML-MODULE:SCHEMA_NOT_HONOURED">
                     <set-variable variableName="aggregator" value="#[[]]" />
