@@ -10,7 +10,7 @@
     </flow>
     
     <flow name="validateSchemaWithSchemaContent">
-        <xml-module:validate-schema schemaContents="#[vars.schemaContents]" />
+        <xml-module:validate-schema schemaContents="#[vars.schemaContents]" schemas="#[vars.schemas]"/>
     </flow>
 
     <flow name="validateSchemaWithReferences">

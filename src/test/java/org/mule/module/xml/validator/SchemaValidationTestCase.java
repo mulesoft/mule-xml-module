@@ -132,15 +132,26 @@ public class SchemaValidationTestCase extends XmlTestCase {
   }
 
   @Test
+  public void validSchemaWithSchemaContent() throws Exception {
+    validateFromSchemaContent("validateSchemaWithSchemaContent", getValidPayload(), SIMPLE_SCHEMA);
+  }
+
+  @Test
   public void invalidSchemaWithSchemaContent() throws Exception {
     expectValidationFailure();
     validateFromSchemaContent("validateSchemaWithSchemaContent", getInvalidPayload(), SIMPLE_SCHEMA);
   }
 
   @Test
-  public void schemaInputErrorWithSchemaContent() throws Exception {
+  public void schemaInputErrorWithoutSchemaContentAndSchema() throws Exception {
     expectedBehaviourOnSchemaInputError(SCHEMA_INPUT_ERROR_STRING);
-    validateFromSchemaContent("validateSchemaWithSchemaContent", getInvalidPayload(), null);
+    validateFromSchemaContent("validateSchemaWithSchemaContent", getValidPayload(), null);
+  }
+
+  @Test
+  public void schemaInputErrorWithSchemaContentAndSchema() throws Exception {
+    expectedBehaviourOnSchemaInputError(SCHEMA_INPUT_ERROR_STRING);
+    validateSchemaInputWithBothSchemaAttributes("validateSchemaWithSchemaContent", getValidPayload(), SIMPLE_SCHEMA);
   }
 
   private void expectValidationFailure() {
@@ -232,6 +243,16 @@ public class SchemaValidationTestCase extends XmlTestCase {
     return flowRunner(flowName)
         .withPayload(payload)
         .withVariable("schemaContents", schemaContents)
+        .run();
+  }
+
+  private Event validateSchemaInputWithBothSchemaAttributes(String flowName, InputStream payload, String... schemas)
+      throws Exception {
+    List<SchemaContent> schemaContents = parseSchemaContent(schemas);
+    return flowRunner(flowName)
+        .withPayload(payload)
+        .withVariable("schemaContents", schemaContents)
+        .withVariable("schemas", SIMPLE_SCHEMA)
         .run();
   }
 
