@@ -11,6 +11,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Objects.hash;
 import static java.util.stream.Collectors.toCollection;
 import static org.mule.module.xml.internal.util.XMLUtils.toDOMNode;
+import static org.mule.module.xml.internal.util.SchemaValidationUtils.checkSchemaInput;
 import static org.mule.runtime.api.meta.model.display.PathModel.Type.FILE;
 import static org.mule.runtime.api.meta.model.operation.ExecutionType.CPU_INTENSIVE;
 import static org.mule.runtime.core.api.util.IOUtils.getResourceAsUrl;
@@ -23,7 +24,6 @@ import org.mule.module.xml.api.SchemaViolation;
 import org.mule.module.xml.internal.XmlModule;
 import org.mule.module.xml.internal.error.InvalidInputXmlException;
 import org.mule.module.xml.internal.error.InvalidSchemaException;
-import org.mule.module.xml.internal.error.SchemaInputException;
 import org.mule.module.xml.internal.error.SchemaValidatorErrorTypeProvider;
 import org.mule.module.xml.internal.error.TransformationException;
 import org.mule.module.xml.internal.util.MuleResourceResolver;
@@ -93,9 +93,7 @@ public class SchemaValidatorOperation
                              @Optional(defaultValue = "W3C") SchemaLanguage schemaLanguage,
                              @Content(primary = true) InputStream content,
                              @Config XmlModule config) {
-    //perform check on schema location field and schema content field, only one can be used and must provided.
     checkSchemaInput(schemas, schemaContents);
-
     withTransformer(new SchemaKey(schemas, schemaContents, schemaLanguage.getLanguageUri(), expandEntities), validator -> {
 
       // set again since the reset() method may nullify this
@@ -155,20 +153,6 @@ public class SchemaValidatorOperation
       }
       return null;
     });
-  }
-
-  private boolean isBlank(String value) {
-    return value == null || value.trim().length() == 0;
-  }
-
-  private boolean isBlank(List<SchemaContent> list) {
-    return list == null || list.isEmpty();
-  }
-
-  private void checkSchemaInput(String schemas, List<SchemaContent> schemaContents) {
-    if ((isBlank(schemas) && isBlank(schemaContents)) || (!isBlank(schemas) && !isBlank(schemaContents))) {
-      throw new SchemaInputException("Either Schema or Schema Content must be provided, and you cannot provide both. ");
-    }
   }
 
   @Override

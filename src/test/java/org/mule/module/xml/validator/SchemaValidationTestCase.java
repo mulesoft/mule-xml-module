@@ -144,13 +144,13 @@ public class SchemaValidationTestCase extends XmlTestCase {
 
   @Test
   public void schemaInputErrorWithoutSchemaContentAndSchema() throws Exception {
-    expectedBehaviourOnSchemaInputError(SCHEMA_INPUT_ERROR_STRING);
+    expectedBehaviourOnSchemaInputError();
     validateFromSchemaContent("validateSchemaWithSchemaContent", getValidPayload(), null);
   }
 
   @Test
   public void schemaInputErrorWithSchemaContentAndSchema() throws Exception {
-    expectedBehaviourOnSchemaInputError(SCHEMA_INPUT_ERROR_STRING);
+    expectedBehaviourOnSchemaInputError();
     validateSchemaInputWithBothSchemaAttributes("validateSchemaWithSchemaContent", getValidPayload(), SIMPLE_SCHEMA);
   }
 
@@ -208,7 +208,7 @@ public class SchemaValidationTestCase extends XmlTestCase {
     });
   }
 
-  private void expectedBehaviourOnSchemaInputError(String problemDescription) {
+  private void expectedBehaviourOnSchemaInputError() {
     expectedError.expectErrorType(ERROR_NAMESPACE, XmlError.SCHEMA_INPUT_ERROR.name());
     expectedError.expectEvent(new BaseMatcher<CoreEvent>() {
 

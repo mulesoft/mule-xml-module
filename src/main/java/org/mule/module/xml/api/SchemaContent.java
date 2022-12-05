@@ -8,11 +8,11 @@ package org.mule.module.xml.api;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 
-import java.util.Objects;
-
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Text;
+
+import java.util.Objects;
 
 public class SchemaContent {
 
@@ -20,12 +20,10 @@ public class SchemaContent {
   @Expression(NOT_SUPPORTED)
   private String schemaName;
 
-
   @Parameter
   @Text
   @Expression(NOT_SUPPORTED)
   private String schemaText;
-
 
   public SchemaContent() {}
 

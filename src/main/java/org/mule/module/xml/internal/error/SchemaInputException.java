@@ -13,7 +13,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
 /**
  * A {@link ModuleException} associated with the {@link XmlError#SCHEMA_INPUT_ERROR} type
  *
- * @since 1.0
+ * @since 1.3.4
  */
 public class SchemaInputException extends ModuleException {
 
@@ -24,5 +24,4 @@ public class SchemaInputException extends ModuleException {
   public SchemaInputException(String message) {
     super(message, SCHEMA_INPUT_ERROR);
   }
-
 }
