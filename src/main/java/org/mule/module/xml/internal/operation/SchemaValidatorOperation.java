@@ -11,12 +11,14 @@ import static java.util.Collections.emptySet;
 import static java.util.Objects.hash;
 import static java.util.stream.Collectors.toCollection;
 import static org.mule.module.xml.internal.util.XMLUtils.toDOMNode;
+import static org.mule.module.xml.internal.util.SchemaValidationUtils.checkSchemaInput;
 import static org.mule.runtime.api.meta.model.display.PathModel.Type.FILE;
 import static org.mule.runtime.api.meta.model.operation.ExecutionType.CPU_INTENSIVE;
 import static org.mule.runtime.core.api.util.IOUtils.getResourceAsUrl;
 import static org.mule.runtime.core.api.util.xmlsecurity.XMLSecureFactories.createWithConfig;
 import org.mule.module.xml.api.EntityExpansion;
 import org.mule.module.xml.api.SchemaLanguage;
+import org.mule.module.xml.api.SchemaContent;
 import org.mule.module.xml.api.SchemaValidationException;
 import org.mule.module.xml.api.SchemaViolation;
 import org.mule.module.xml.internal.XmlModule;
@@ -30,12 +32,14 @@ import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.execution.Execution;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.Content;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.display.Path;
 import org.mule.runtime.extension.api.annotation.param.stereotype.Validator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -44,10 +48,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
@@ -82,11 +88,13 @@ public class SchemaValidatorOperation
   @Validator
   @Execution(CPU_INTENSIVE)
   @Throws(SchemaValidatorErrorTypeProvider.class)
-  public void validateSchema(@Path(type = FILE, acceptedFileExtensions = "xsd") String schemas,
+  public void validateSchema(@Optional @Path(type = FILE, acceptedFileExtensions = "xsd") String schemas,
+                             @Optional @NullSafe List<SchemaContent> schemaContents,
                              @Optional(defaultValue = "W3C") SchemaLanguage schemaLanguage,
                              @Content(primary = true) InputStream content,
                              @Config XmlModule config) {
-    withTransformer(new SchemaKey(schemas, schemaLanguage.getLanguageUri(), expandEntities), validator -> {
+    checkSchemaInput(schemas, schemaContents);
+    withTransformer(new SchemaKey(schemas, schemaContents, schemaLanguage.getLanguageUri(), expandEntities), validator -> {
 
       // set again since the reset() method may nullify this
       validator.setResourceResolver(resourceResolver);
@@ -152,8 +160,14 @@ public class SchemaValidatorOperation
     return new BasePooledObjectFactory<javax.xml.validation.Validator>() {
 
       @Override
-      public javax.xml.validation.Validator create() {
-        Source[] schemas = loadSchemas(key.schemas);
+      public javax.xml.validation.Validator create() throws ParserConfigurationException, SAXException, IOException {
+        Source[] schemas = null;
+        if (key.schemaContents.isEmpty()) {
+          schemas = loadSchemas(key.schemas);
+        } else {
+          schemas = loadSchemasFromSchemaContents(key.schemaContents);
+        }
+
         SchemaFactory schemaFactory = createWithConfig(key.expandEntities.isAcceptExternalEntities(),
                                                        key.expandEntities.isExpandInternalEntities())
                                                            .getSchemaFactory(key.schemaLanguage);
@@ -204,14 +218,61 @@ public class SchemaValidatorOperation
     return schemas;
   }
 
+  private Source[] loadSchemasFromSchemaContents(List<SchemaContent> schemaContents) {
+    if (schemaContents == null || schemaContents.isEmpty()) {
+      return new Source[0];
+    }
+    String[] schemaArray = convertSchemaText(schemaContents);
+    Source[] schemas = new Source[schemaArray.length];
+
+    int i = 0;
+    for (String schema : schemaArray) {
+      try {
+        schemas[i++] = new StreamSource(new StringReader(schema));
+      } catch (Exception e) {
+        throw new InvalidSchemaException(format("Failed to load schema '%s'. %s", schema, e.getMessage()), e);
+      }
+    }
+
+    return schemas;
+  }
+
+  private String[] convertSchemaText(List<SchemaContent> schemaContents) {
+    String[] schemas = null;
+
+    if (schemaContents.isEmpty()) {
+      schemas = new String[1];
+      schemas[0] = "";
+      return schemas;
+    }
+
+    schemas = new String[schemaContents.size()];
+
+    for (int i = 0; i < schemaContents.size(); i++) {
+      schemas[i] = schemaContents.get(i).getSchemaText();
+    }
+
+    return schemas;
+  }
+
   class SchemaKey {
 
     private final Set<String> schemas;
     private final String schemaLanguage;
     private final EntityExpansion expandEntities;
+    private final List<SchemaContent> schemaContents;
 
     public SchemaKey(String schemas, String schemaLanguage, EntityExpansion expandEntities) {
       this.schemas = parseSchemas(schemas);
+      this.schemaLanguage = schemaLanguage;
+      this.expandEntities = expandEntities;
+      this.schemaContents = null;
+    }
+
+    public SchemaKey(String schemas, List<SchemaContent> schemaContents, String schemaLanguage,
+                     EntityExpansion expandEntities) {
+      this.schemas = parseSchemas(schemas);
+      this.schemaContents = schemaContents;
       this.schemaLanguage = schemaLanguage;
       this.expandEntities = expandEntities;
     }
@@ -231,13 +292,14 @@ public class SchemaValidatorOperation
         return false;
       }
       return Objects.equals(schemas, other.schemas)
+          && Objects.equals(schemaContents, other.schemaContents)
           && Objects.equals(schemaLanguage, other.schemaLanguage)
           && expandEntities == other.expandEntities;
     }
 
     @Override
     public int hashCode() {
-      return hash(schemas, schemaLanguage, expandEntities);
+      return hash(schemas, schemaContents, schemaLanguage, expandEntities);
     }
   }
 }
