@@ -16,10 +16,16 @@ import java.util.Objects;
 
 public class SchemaContent {
 
+  /*
+   * Schema name content to define.
+   */
   @Parameter
   @Expression(NOT_SUPPORTED)
   private String schemaName;
 
+  /*
+   * Schema text content to define.
+   */
   @Parameter
   @Text
   @Expression(NOT_SUPPORTED)
