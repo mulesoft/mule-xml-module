@@ -81,6 +81,7 @@ public class SchemaValidatorOperation
    * (using comma as a separator) which include each other.
    *
    * @param schemas The path to the schema file. You can specify multiple schema locations by using a comma separator
+   * @param schemaContents Schema text content for performing a schema validation.
    * @param schemaLanguage The schema language to use.
    * @param content the XML content to validate
    * @param config the config
