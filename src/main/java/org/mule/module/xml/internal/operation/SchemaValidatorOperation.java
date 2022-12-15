@@ -80,7 +80,9 @@ public class SchemaValidatorOperation
    * Validates that the input content is compliant with a given schema. This operation supports referencing many schemas
    * (using comma as a separator) which include each other.
    *
+   * TODO schemas and schemaContents design-time validation (W-12220355) 
    * @param schemas The path to the schema file. You can specify multiple schema locations by using a comma separator
+   * @param schemaContents Schema text content for performing a schema validation.
    * @param schemaLanguage The schema language to use.
    * @param content the XML content to validate
    * @param config the config
