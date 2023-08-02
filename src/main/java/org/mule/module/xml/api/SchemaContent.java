@@ -31,8 +31,6 @@ public class SchemaContent {
   @Expression(NOT_SUPPORTED)
   private String schemaText;
 
-  public SchemaContent() {}
-
   public SchemaContent(final String schemaText, final String schemaName) {
     this.schemaText = schemaText;
     this.schemaName = schemaName;
