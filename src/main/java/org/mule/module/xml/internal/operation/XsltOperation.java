@@ -113,7 +113,7 @@ public class XsltOperation extends PooledTransformerOperation<String, XsltTransf
       } else if (value instanceof InputStream) {
         xdmValue = new XdmAtomicValue(IOUtils.toString((InputStream) value));
       } else if (value instanceof Integer) {
-        xdmValue = new XdmAtomicValue((Long) value);
+        xdmValue = new XdmAtomicValue((Integer) value);
       } else if (value instanceof Boolean) {
         xdmValue = new XdmAtomicValue((Boolean) value);
       } else if (value instanceof Long) {
