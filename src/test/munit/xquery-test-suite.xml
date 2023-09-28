@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	  xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd">
+	<munit:config name="xquery-test-suite.xml" />
+
+	<munit:test name="context-string-test" >
+		<munit:execution >
+			<xml-module:xquery-transform>
+				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
+				<xml-module:xquery><![CDATA[
+                   	xquery version "3.0";
+                   	declare variable $document external;
+                   	declare variable $value external;
+                   	for $n in 1 to 1
+	                   	return
+	                   		$value
+                ]]>
+				</xml-module:xquery>
+				<xml-module:context-properties ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"value": "hello"
+}]]]></xml-module:context-properties>
+			</xml-module:xquery-transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[payload[0]]" expected='#["hello"]'/>
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="context-integer-test" >
+		<munit:execution >
+			<xml-module:xquery-transform>
+				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
+				<xml-module:xquery><![CDATA[
+                   	xquery version "3.0";
+                   	declare variable $document external;
+                   	declare variable $value external;
+                   	for $n in 1 to 1
+	                   	return
+	                   		$value
+                ]]>
+				</xml-module:xquery>
+				<xml-module:context-properties ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"value": 1234
+}]]]></xml-module:context-properties>
+			</xml-module:xquery-transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[payload[0]]" expected='#["1234"]'/>
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="context-double-test" >
+		<munit:execution >
+			<xml-module:xquery-transform>
+				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
+				<xml-module:xquery><![CDATA[
+                   	xquery version "3.0";
+                   	declare variable $document external;
+                   	declare variable $value external;
+                   	for $n in 1 to 1
+	                   	return
+	                   		$value
+                ]]>
+				</xml-module:xquery>
+				<xml-module:context-properties ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	value:12.34 as Number{class:"double"}
+}]]]></xml-module:context-properties>
+			</xml-module:xquery-transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[payload[0]]" expected='#["12.34"]'/>
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="context-float-test" >
+		<munit:execution >
+			<xml-module:xquery-transform>
+				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
+				<xml-module:xquery><![CDATA[
+                   	xquery version "3.0";
+                   	declare variable $document external;
+                   	declare variable $value external;
+                   	for $n in 1 to 1
+	                   	return
+	                   		$value
+                ]]>
+				</xml-module:xquery>
+				<xml-module:context-properties ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	value:12.34 as Number{class:"float"}
+}]]]></xml-module:context-properties>
+			</xml-module:xquery-transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[payload[0]]" expected='#["12.34"]'/>
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="context-boolean-test" >
+		<munit:execution >
+			<xml-module:xquery-transform>
+				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
+				<xml-module:xquery><![CDATA[
+                   	xquery version "3.0";
+                   	declare variable $document external;
+                   	declare variable $value external;
+                   	for $n in 1 to 1
+	                   	return
+	                   		$value
+                ]]>
+				</xml-module:xquery>
+				<xml-module:context-properties ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"value": true
+}]]]></xml-module:context-properties>
+			</xml-module:xquery-transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[payload[0]]" expected='#["true"]'/>
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="context-byte-test" >
+		<munit:execution >
+			<xml-module:xquery-transform>
+				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
+				<xml-module:xquery><![CDATA[
+                   	xquery version "3.0";
+                   	declare variable $document external;
+                   	declare variable $value external;
+                   	for $n in 1 to 1
+	                   	return
+	                   		$value
+                ]]>
+				</xml-module:xquery>
+				<xml-module:context-properties ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	value:97 as Number{class:"byte"}
+}]]]></xml-module:context-properties>
+			</xml-module:xquery-transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[payload[0]]" expected='#["97"]'/>
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="context-short-test" >
+		<munit:execution >
+			<xml-module:xquery-transform>
+				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
+				<xml-module:xquery><![CDATA[
+                   	xquery version "3.0";
+                   	declare variable $document external;
+                   	declare variable $value external;
+                   	for $n in 1 to 1
+	                   	return
+	                   		$value
+                ]]>
+				</xml-module:xquery>
+				<xml-module:context-properties ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	value:32767 as Number{class:"short"}
+}]]]></xml-module:context-properties>
+			</xml-module:xquery-transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[payload[0]]" expected='#["32767"]'/>
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="context-long-test" >
+		<munit:execution >
+			<xml-module:xquery-transform>
+				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
+				<xml-module:xquery><![CDATA[
+                   	xquery version "3.0";
+                   	declare variable $document external;
+                   	declare variable $value external;
+                   	for $n in 1 to 1
+	                   	return
+	                   		$value
+                ]]>
+				</xml-module:xquery>
+				<xml-module:context-properties ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	value: 9223372036854775807 as Number{class:"long"}
+}]]]></xml-module:context-properties>
+			</xml-module:xquery-transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[payload[0]]" expected='#["9223372036854775807"]'/>
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="context-null-test" expectedErrorType="XML-MODULE:TRANSFORMATION">
+		<munit:execution >
+			<xml-module:xquery-transform>
+				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
+				<xml-module:xquery><![CDATA[
+                   	xquery version "3.0";
+                   	declare variable $document external;
+                   	declare variable $value external;
+                   	for $n in 1 to 1
+	                   	return
+	                   		$value
+                ]]>
+				</xml-module:xquery>
+				<xml-module:context-properties ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"value": null
+}]]]></xml-module:context-properties>
+			</xml-module:xquery-transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[payload[0]]" expected='#["null"]'/>
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="context-unsupported-type-test" expectedErrorType="XML-MODULE:TRANSFORMATION">
+		<munit:execution >
+			<xml-module:xquery-transform>
+				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
+				<xml-module:xquery><![CDATA[
+                   	xquery version "3.0";
+                   	declare variable $document external;
+                   	declare variable $value external;
+                   	for $n in 1 to 1
+	                   	return
+	                   		$value
+                ]]>
+				</xml-module:xquery>
+				<xml-module:context-properties ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	value:value: "2023-01-01" as Date
+}]]]></xml-module:context-properties>
+			</xml-module:xquery-transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[payload[0]]" expected='#["none"]'/>
+		</munit:validation>
+	</munit:test>
+
+</mule>

@@ -15,20 +15,20 @@ public enum EntityExpansion {
 
   /**
    * Never accept XML documents with references to external files nor expand internal entity references in the XML body.
-   * This prevents XXE and Billion Laughs (DoS) attacks
+   * This prevents XXE and a Billion Laughs (DoS) attacks
    */
   NEVER(false, false),
 
   /**
    * Never accept XML documents with references to external files but do expand internal entity references in the XML body.
-   * This prevents XXE but remains vulnerable to Billion Laughs (DoS) attacks. Use under your own risk with trusted documents
+   * This prevents XXE but remains vulnerable to a Billion Laughs (DoS) attacks. Use under your own risk with trusted documents
    * only
    */
   INTERNAL(false, true),
 
   /**
    * Accept XML documents with references to external files and expand internal entity references in the XML body.
-   * This is vulnerable to XXE and Billion Laughs (DoS) attacks. Use under your own risk with trusted documents
+   * This is vulnerable to XXE and a Billion Laughs (DoS) attacks. Use under your own risk with trusted documents
    * only
    */
   ALL(true, true);

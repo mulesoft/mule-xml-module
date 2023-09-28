@@ -76,7 +76,7 @@ public class XPathEvaluator implements XPathVariableResolver {
     XPath xpath = xpathFactory.newXPath();
     xpath.setXPathVariableResolver(this);
     xpath.setNamespaceContext(new XPathNamespaceContext(namespaces.stream()
-        .collect(toMap(ns -> ns.getPrefix(), ns -> ns.getUri()))));
+        .collect(toMap(NamespaceMapping::getPrefix, NamespaceMapping::getUri))));
     try {
       xpathExpression = xpath.compile(expression);
     } catch (Exception e) {
