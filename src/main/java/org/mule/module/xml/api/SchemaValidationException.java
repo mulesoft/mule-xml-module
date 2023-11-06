@@ -7,6 +7,7 @@
 package org.mule.module.xml.api;
 
 import static org.mule.module.xml.api.XmlError.SCHEMA_NOT_HONOURED;
+
 import org.mule.runtime.api.exception.ErrorMessageAwareException;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
@@ -23,6 +24,9 @@ public class SchemaValidationException extends ModuleException implements ErrorM
 
   private Message message;
 
+  public SchemaValidationException() {
+    this(null, null);
+  }
 
   /**
    * Creates a new instance

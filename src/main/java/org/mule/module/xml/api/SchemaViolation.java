@@ -59,6 +59,7 @@ public class SchemaViolation {
   public void setDescription(String description) {
     this.description = description;
   }
+
   /**
    * @return the description of the problem
    */
