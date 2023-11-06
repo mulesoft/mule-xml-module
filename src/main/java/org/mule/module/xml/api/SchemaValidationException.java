@@ -9,6 +9,7 @@ package org.mule.module.xml.api;
 import static org.mule.module.xml.api.XmlError.SCHEMA_NOT_HONOURED;
 import org.mule.runtime.api.exception.ErrorMessageAwareException;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 import java.util.List;
@@ -20,7 +21,8 @@ import java.util.List;
  */
 public class SchemaValidationException extends ModuleException implements ErrorMessageAwareException {
 
-  private final Message message;
+  private Message message;
+
 
   /**
    * Creates a new instance
@@ -31,6 +33,11 @@ public class SchemaValidationException extends ModuleException implements ErrorM
   public SchemaValidationException(String message, List<SchemaViolation> problems) {
     super(message, SCHEMA_NOT_HONOURED);
     this.message = Message.builder().collectionValue(problems, SchemaViolation.class).build();
+  }
+
+
+  public void setMessage(Message message) {
+    this.message = message;
   }
 
   @Override

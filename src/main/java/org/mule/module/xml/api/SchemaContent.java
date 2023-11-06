@@ -38,13 +38,22 @@ public class SchemaContent {
     this.schemaName = schemaName;
   }
 
-  public String getSchemaText() {
-    return schemaText;
+  public void setSchemaName(String schemaName) {
+    this.schemaName = schemaName;
   }
 
   public String getSchemaName() {
     return schemaName;
   }
+
+  public void setSchemaText(String schemaText) {
+    this.schemaText = schemaText;
+  }
+
+  public String getSchemaText() {
+    return schemaText;
+  }
+
 
   @Override
   public boolean equals(Object obj) {

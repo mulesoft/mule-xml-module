@@ -45,6 +45,14 @@ public class NamespaceMapping {
     this.uri = uri;
   }
 
+  public void setPrefix(String prefix) {
+    this.prefix = prefix;
+  }
+
+  public void setUri(String uri) {
+    this.uri = uri;
+  }
+
   public String getPrefix() {
     return prefix;
   }

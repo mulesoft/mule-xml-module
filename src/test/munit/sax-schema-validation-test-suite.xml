@@ -42,8 +42,8 @@
                 <error-handler>
                     <on-error-continue type="XML-MODULE:SCHEMA_NOT_HONOURED">
                         <set-variable variableName="schemaNotHonouredExceptionThrown" value="#[true]" />
-                        <set-variable variableName="columnNumber" value="#[error.muleMessage.typedValue[0].columnNumber]" />
-                        <set-variable variableName="lineNumber" value="#[error.muleMessage.typedValue[0].lineNumber]" />
+                        <set-variable variableName="columnNumber" value="#[error.errorMessage.payload[0].columnNumber]" />
+                        <set-variable variableName="lineNumber" value="#[error.errorMessage.payload[0].lineNumber]" />
                     </on-error-continue>
                 </error-handler>
             </try>
