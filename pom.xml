@@ -139,7 +139,7 @@
                     </argLines>
                     <runtimeConfiguration>
                         <discoverRuntimes>
-                            <product>CE</product>
+                            <product>EE</product>
                             <minMuleVersion>4.6.0</minMuleVersion>
                         </discoverRuntimes>
                     </runtimeConfiguration>
