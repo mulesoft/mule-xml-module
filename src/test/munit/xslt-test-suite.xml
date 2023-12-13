@@ -10,7 +10,7 @@
 http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd">
 	<munit:config name="xslt-test-suite.xml" />
 
-	<munit:test name="context-string-test" >
+	<munit:test name="context-string-test-xslt" >
 		<munit:execution >
 			<xml-module:xslt-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -41,7 +41,7 @@ output application/json
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-integer-test" >
+	<munit:test name="context-integer-test-xslt" >
 		<munit:execution >
 			<xml-module:xslt-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -72,7 +72,7 @@ output application/json
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-double-test" >
+	<munit:test name="context-double-test-xslt" >
 		<munit:execution >
 			<xml-module:xslt-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -103,7 +103,7 @@ output application/java
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-float-test" >
+	<munit:test name="context-float-test-xslt" >
 		<munit:execution >
 			<xml-module:xslt-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -134,7 +134,7 @@ output application/java
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-boolean-test" >
+	<munit:test name="context-boolean-test-xslt" >
 		<munit:execution >
 			<xml-module:xslt-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -165,7 +165,7 @@ output application/json
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-byte-test" >
+	<munit:test name="context-byte-test-xslt" >
 		<munit:execution >
 			<xml-module:xslt-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -196,7 +196,7 @@ output application/java
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-short-test" >
+	<munit:test name="context-short-test-xslt" >
 		<munit:execution >
 			<xml-module:xslt-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -227,7 +227,7 @@ output application/java
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-long-test" >
+	<munit:test name="context-long-test-xslt" >
 		<munit:execution >
 			<xml-module:xslt-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -258,7 +258,7 @@ output application/java
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-null-test" expectedErrorType="XML-MODULE:NULL_CONTEXT_PROPERTY">
+	<munit:test name="context-null-tes-xsltt" expectedErrorType="XML-MODULE:NULL_CONTEXT_PROPERTY">
 		<munit:execution >
 			<xml-module:xslt-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -289,7 +289,7 @@ output application/json
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-unsupported-type-test" expectedErrorType="XML-MODULE:TRANSFORMATION">
+	<munit:test name="context-unsupported-type-test-xslt" expectedErrorType="XML-MODULE:TRANSFORMATION">
 		<munit:execution >
 			<xml-module:xslt-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
