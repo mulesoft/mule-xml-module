@@ -36,7 +36,7 @@ output application/json
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-integer-test" >
+	<munit:test name="context-integer-test-xquery" >
 		<munit:execution >
 			<xml-module:xquery-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -62,7 +62,7 @@ output application/json
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-double-test" >
+	<munit:test name="context-double-test-xquery" >
 		<munit:execution >
 			<xml-module:xquery-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -88,7 +88,7 @@ output application/java
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-float-test" >
+	<munit:test name="context-float-test-xquery" >
 		<munit:execution >
 			<xml-module:xquery-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -114,7 +114,7 @@ output application/java
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-boolean-test" >
+	<munit:test name="context-boolean-test-xquery" >
 		<munit:execution >
 			<xml-module:xquery-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -140,7 +140,7 @@ output application/json
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-byte-test" >
+	<munit:test name="context-byte-test-xquery" >
 		<munit:execution >
 			<xml-module:xquery-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -166,7 +166,7 @@ output application/java
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-short-test" >
+	<munit:test name="context-short-test-xquery" >
 		<munit:execution >
 			<xml-module:xquery-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -192,7 +192,7 @@ output application/java
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-long-test" >
+	<munit:test name="context-long-test-xquery" >
 		<munit:execution >
 			<xml-module:xquery-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -218,7 +218,7 @@ output application/java
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-null-test" expectedErrorType="XML-MODULE:TRANSFORMATION">
+	<munit:test name="context-null-test-xquery" expectedErrorType="XML-MODULE:TRANSFORMATION">
 		<munit:execution >
 			<xml-module:xquery-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
@@ -244,7 +244,7 @@ output application/json
 		</munit:validation>
 	</munit:test>
 
-	<munit:test name="context-unsupported-type-test" expectedErrorType="XML-MODULE:TRANSFORMATION">
+	<munit:test name="context-unsupported-type-test-xquery" expectedErrorType="XML-MODULE:TRANSFORMATION">
 		<munit:execution >
 			<xml-module:xquery-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
