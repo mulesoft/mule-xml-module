@@ -10,7 +10,7 @@
 http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd">
 	<munit:config name="xslt-test-suite.xml" />
 
-	<munit:test name="context-string-test" >
+	<munit:test name="context-string-test-xslt" >
 		<munit:execution >
 			<xml-module:xslt-transform>
 				<xml-module:content ><![CDATA[<xml></xml>]]></xml-module:content>
