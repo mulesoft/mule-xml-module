@@ -264,13 +264,6 @@ public class SchemaValidatorOperation
     private final EntityExpansion expandEntities;
     private final List<SchemaContent> schemaContents;
 
-    public SchemaKey(String schemas, String schemaLanguage, EntityExpansion expandEntities) {
-      this.schemas = parseSchemas(schemas);
-      this.schemaLanguage = schemaLanguage;
-      this.expandEntities = expandEntities;
-      this.schemaContents = null;
-    }
-
     public SchemaKey(String schemas, List<SchemaContent> schemaContents, String schemaLanguage,
                      EntityExpansion expandEntities) {
       this.schemas = parseSchemas(schemas);

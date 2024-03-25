@@ -8,6 +8,10 @@ package org.mule.module.xml.internal;
 
 import static org.mule.module.xml.api.EntityExpansion.NEVER;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+import static org.mule.sdk.api.meta.JavaVersion.JAVA_11;
+import static org.mule.sdk.api.meta.JavaVersion.JAVA_17;
+import static org.mule.sdk.api.meta.JavaVersion.JAVA_8;
+
 import org.mule.module.xml.api.EntityExpansion;
 import org.mule.module.xml.api.NamespaceMapping;
 import org.mule.module.xml.api.XmlError;
@@ -26,6 +30,8 @@ import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+import org.mule.sdk.api.annotation.JavaVersionSupport;
+import org.mule.sdk.api.meta.JavaVersion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +48,7 @@ import java.util.List;
 @Operations({XsltOperation.class, XPathOperation.class, XQueryOperation.class, SchemaValidatorOperation.class})
 @ErrorTypes(XmlError.class)
 @ExpressionFunctions(XPathFunction.class)
+@JavaVersionSupport({JAVA_8, JAVA_11, JAVA_17})
 @Xml(prefix = "xml-module")
 public class XmlModule {
 

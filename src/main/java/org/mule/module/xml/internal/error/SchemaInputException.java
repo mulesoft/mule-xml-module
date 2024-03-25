@@ -17,10 +17,6 @@ import org.mule.runtime.extension.api.exception.ModuleException;
  */
 public class SchemaInputException extends ModuleException {
 
-  public SchemaInputException(String message, Throwable cause) {
-    super(message, SCHEMA_INPUT_ERROR, cause);
-  }
-
   public SchemaInputException(String message) {
     super(message, SCHEMA_INPUT_ERROR);
   }
