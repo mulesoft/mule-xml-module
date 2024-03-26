@@ -25,7 +25,7 @@
         <saxon-he.version>10.9</saxon-he.version>
         <xqj-api.version>1.0</xqj-api.version>
         <guava.version>33.1.0-jre</guava.version>
-        <commons-pool2.version>2.11.1</commons-pool2.version>
+        <commons-pool2.version>2.12.0</commons-pool2.version>
         <xmlunit.version>1.6</xmlunit.version>
 
         <munit.input.directory>src/test/munit</munit.input.directory>
