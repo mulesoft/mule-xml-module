@@ -13,9 +13,11 @@ package org.mule.module.xml.api;
  */
 public class SchemaViolation {
 
-  private final int lineNumber;
-  private final int columnNumber;
-  private final String description;
+  private int lineNumber;
+  private int columnNumber;
+  private String description;
+
+  public SchemaViolation() {}
 
   /**
    * Creates a new instance
@@ -30,6 +32,10 @@ public class SchemaViolation {
     this.description = description;
   }
 
+  public void setLineNumber(int lineNumber) {
+    this.lineNumber = lineNumber;
+  }
+
   /**
    * @return the line number in which the problem was found
    */
@@ -37,11 +43,21 @@ public class SchemaViolation {
     return lineNumber;
   }
 
+
+  public void setColumnNumber(int columnNumber) {
+    this.columnNumber = columnNumber;
+  }
+
   /**
    * @return the column number in which the problem was found
    */
   public int getColumnNumber() {
     return columnNumber;
+  }
+
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   /**

@@ -31,6 +31,12 @@ public class NamespaceDirectory {
   @Expression(NOT_SUPPORTED)
   private List<NamespaceMapping> namespaces = new ArrayList<>();
 
+  public NamespaceDirectory() {}
+
+  public void setNamespaces(List<NamespaceMapping> namespaces) {
+    this.namespaces = namespaces;
+  }
+
   public List<NamespaceMapping> getNamespaces() {
     return namespaces;
   }
