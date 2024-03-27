@@ -10,7 +10,7 @@
 		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
         http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd">
 
-    <munit:config name="concurrent-schema-validation-test-suite.xml"/>
+    <munit:config name="concurrent-schema-validation-test-suite.xml"  minMuleVersion="4.3.0"/>
 
     <munit:test name="validateXmlFilesConcurrently">
         <munit:behavior>
