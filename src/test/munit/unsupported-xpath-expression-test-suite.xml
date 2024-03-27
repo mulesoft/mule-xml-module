@@ -3,12 +3,14 @@
 <mule xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
       xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
         http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd">
 
-    <munit:config name="unsupported-xpath-expression-test-suite.xml" minMuleVersion="4.3.0"/>
+    <munit:config name="unsupported-xpath-expression-test-suite.xml"/>
 
     <munit:test name="xpathReturningUriFailsWithUnsupportedMessage" expectedErrorDescription="Unsupported XPath expression">
         <munit:behavior>
