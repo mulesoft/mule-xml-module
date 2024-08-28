@@ -41,6 +41,7 @@
         <munit.version>3.1.0</munit.version>
         <mule-sdk-api.version>0.7.0</mule-sdk-api.version>
         <munit.failIfNoTests>false</munit.failIfNoTests>
+        <mule.version>4.7.3-SNAPSHOT</mule.version>
     </properties>
 
     <dependencies>
