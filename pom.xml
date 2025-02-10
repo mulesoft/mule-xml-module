@@ -30,15 +30,15 @@
 
         <munit.input.directory>src/test/munit</munit.input.directory>
         <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
-        <munit.version>2.3.17</munit.version>
+        <munit.version>3.3.2</munit.version>
         <mavenResources.version>3.3.1</mavenResources.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
         <!-- JDK 17 Compatibility Props -->
-        <munit.extensions.maven.plugin.version>1.2.0</munit.extensions.maven.plugin.version>
+        <munit.extensions.maven.plugin.version>1.4.0</munit.extensions.maven.plugin.version>
         <jacoco.version>0.8.11</jacoco.version>
-        <munit.version>3.1.0</munit.version>
+        <munit.version>3.3.2</munit.version>
         <mule-sdk-api.version>0.7.0</mule-sdk-api.version>
         <munit.failIfNoTests>false</munit.failIfNoTests>
     </properties>
